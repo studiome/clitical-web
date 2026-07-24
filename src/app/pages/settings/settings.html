@@ -1,0 +1,34 @@
+<h1 class="page-title">{{ t().settings }}</h1>
+
+<section aria-labelledby="language-heading">
+  <h2 id="language-heading" class="section-title">{{ t().language }}</h2>
+  <div class="section-card">
+    <mat-radio-group
+      class="language-group"
+      [attr.aria-label]="t().language"
+      [value]="locale()"
+      (change)="onLocaleChange($event)"
+    >
+      <mat-radio-button value="ja">{{ t().ja }}</mat-radio-button>
+      <mat-radio-button value="en">{{ t().en }}</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <div class="section-card terms-card">
+    <a class="terms-link" [href]="termsUrl" target="_blank" rel="noopener">
+      <span>{{ t().appTerms }}</span>
+      <span class="material-icons" aria-hidden="true">open_in_new</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="about-heading">
+  <h2 id="about-heading" class="section-title">{{ t().about }}</h2>
+  <div class="about">
+    <div class="about-row">
+      <span class="app-name">{{ t().appName }}</span>
+      <span class="version">{{ t().version }}: {{ version }}</span>
+    </div>
+    <p class="legalese">{{ t().appLegalese }}</p>
+  </div>
+</section>

@@ -7,7 +7,9 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { App } from './app';
 import { routes } from './app.routes';
 import { QuestionForm } from './pages/question-form/question-form';
+import { References } from './pages/references/references';
 import { RiskView } from './pages/risk-view/risk-view';
+import { Settings } from './pages/settings/settings';
 import { PatientDataStore } from './services/patient-data-store';
 
 // colour-contrast needs a real layout engine, so it cannot run under jsdom;
@@ -46,9 +48,22 @@ describe('accessibility (axe)', () => {
     await expectNoViolations(fixture.nativeElement);
   });
 
+  it('references page has no axe violations', async () => {
+    const fixture = TestBed.createComponent(References);
+    await fixture.whenStable();
+    await expectNoViolations(fixture.nativeElement);
+  });
+
+  it('settings page has no axe violations', async () => {
+    const fixture = TestBed.createComponent(Settings);
+    await fixture.whenStable();
+    await expectNoViolations(fixture.nativeElement);
+  });
+
   it('app shell has no axe violations', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     await expectNoViolations(fixture.nativeElement);
   });
 });
+

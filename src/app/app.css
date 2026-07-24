@@ -1,7 +1,7 @@
 .app-toolbar {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 101;
   background: var(--mat-sys-primary);
   color: var(--mat-sys-on-primary);
 }
@@ -11,10 +11,15 @@
   margin: 0;
 }
 
-.app-toolbar button {
-  color: var(--mat-sys-on-primary);
+/* Leave room for the fixed navigation: bottom bar on compact, rail on wider. */
+main {
+  display: block;
+  padding-bottom: 80px;
 }
 
-.spacer {
-  flex: 1 1 auto;
+@media (min-width: 600px) {
+  main {
+    padding-bottom: 0;
+    padding-left: 80px;
+  }
 }

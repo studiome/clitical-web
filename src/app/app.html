@@ -1,44 +1,12 @@
 <mat-toolbar class="app-toolbar">
   <h1 class="app-title">{{ t().appName }}</h1>
-  <span class="spacer"></span>
-  <button
-    matIconButton
-    class="menu-button"
-    [attr.aria-label]="t().menu"
-    [matMenuTriggerFor]="infoMenu"
-  >
-    <mat-icon aria-hidden="true">more_vert</mat-icon>
-  </button>
 </mat-toolbar>
 
-<mat-menu #infoMenu>
-  <button mat-menu-item [matMenuTriggerFor]="languageMenu">
-    <mat-icon aria-hidden="true">language</mat-icon>
-    <span>{{ t().language }}</span>
-  </button>
-  <button mat-menu-item (click)="openReferences()">
-    <mat-icon aria-hidden="true">article</mat-icon>
-    <span>{{ t().references }}</span>
-  </button>
-  <button mat-menu-item (click)="openAbout()">
-    <mat-icon aria-hidden="true">info</mat-icon>
-    <span>{{ t().about }}</span>
-  </button>
-  <a
-    mat-menu-item
-    href="https://studiome.github.io/clti_risk/"
-    target="_blank"
-    rel="noopener"
-  >
-    <mat-icon aria-hidden="true">handshake</mat-icon>
-    <span>{{ t().appTerms }}</span>
-  </a>
-</mat-menu>
-
-<mat-menu #languageMenu>
-  <button mat-menu-item (click)="setLocale('ja')">{{ t().ja }}</button>
-  <button mat-menu-item (click)="setLocale('en')">{{ t().en }}</button>
-</mat-menu>
+<app-navigation
+  [destinations]="destinations()"
+  [activeId]="activeId()"
+  [ariaLabel]="t().appName"
+/>
 
 <main>
   <router-outlet />

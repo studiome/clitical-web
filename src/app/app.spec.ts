@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { App } from './app';
 import { routes } from './app.routes';
-import { TranslationService } from './services/translation';
 
 describe('App', () => {
   beforeEach(async () => {
@@ -22,6 +21,22 @@ describe('App', () => {
     expect(compiled.querySelector('mat-toolbar')?.textContent).toContain('CLiTICAL');
   });
 
+  it('shows the three navigation destinations', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const nav: HTMLElement = fixture.nativeElement.querySelector('nav');
+    expect(nav.textContent).toContain('Risk Assessment');
+    expect(nav.textContent).toContain('References');
+    expect(nav.textContent).toContain('Settings');
+  });
+
+  it('has no overflow menu button in the toolbar', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const toolbar: HTMLElement = fixture.nativeElement.querySelector('mat-toolbar');
+    expect(toolbar.querySelector('button')).toBeNull();
+  });
+
   it('shows the question form on the home route', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
@@ -32,34 +47,36 @@ describe('App', () => {
     );
   });
 
-  it('has no reset button in the toolbar', async () => {
+  it('navigates to the References destination and marks it active', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const toolbar: HTMLElement = fixture.nativeElement.querySelector('mat-toolbar');
-    expect(toolbar.querySelector('.reset-button')).toBeNull();
+    await TestBed.inject(Router).navigateByUrl('/references');
+    await fixture.whenStable();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent!;
+    expect(text).toContain('Tap to open link.');
+
+    const current = fixture.nativeElement.querySelector('nav a[aria-current="page"]');
+    expect(current?.textContent).toContain('References');
   });
 
-  it('switches language from the language item in the overflow menu', async () => {
+  it('navigates to the Settings destination and marks it active', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const menuButton: HTMLButtonElement =
-      fixture.nativeElement.querySelector('.menu-button');
-    menuButton.click();
+    await TestBed.inject(Router).navigateByUrl('/settings');
     await fixture.whenStable();
 
-    const languageItem = [
-      ...document.querySelectorAll<HTMLElement>('[mat-menu-item]'),
-    ].find((el) => el.textContent?.includes('Language'));
-    expect(languageItem).toBeTruthy();
-    languageItem!.click();
+    const current = fixture.nativeElement.querySelector('nav a[aria-current="page"]');
+    expect(current?.textContent).toContain('Settings');
+  });
+
+  it('keeps Risk active on the result route', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    await TestBed.inject(Router).navigateByUrl('/result');
     await fixture.whenStable();
 
-    const jaOption = [...document.querySelectorAll<HTMLElement>('[mat-menu-item]')].find(
-      (el) => el.textContent?.includes('日本語'),
-    );
-    expect(jaOption).toBeTruthy();
-    jaOption!.click();
-    await fixture.whenStable();
-    expect(TestBed.inject(TranslationService).locale()).toBe('ja');
+    const current = fixture.nativeElement.querySelector('nav a[aria-current="page"]');
+    expect(current?.textContent).toContain('Risk Assessment');
   });
 });

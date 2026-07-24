@@ -11,5 +11,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/risk-view/risk-view').then((m) => m.RiskView),
   },
+  {
+    path: 'references',
+    loadComponent: () =>
+      import('./pages/references/references').then((m) => m.References),
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./pages/settings/settings').then((m) => m.Settings),
+  },
   { path: '**', redirectTo: '' },
 ];

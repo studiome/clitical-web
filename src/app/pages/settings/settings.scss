@@ -1,0 +1,85 @@
+:host {
+  display: block;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+
+.page-title {
+  font: var(--mat-sys-headline-medium);
+  margin: 8px 0 8px;
+}
+
+.section-title {
+  font: var(--mat-sys-title-small);
+  font-weight: 700;
+  color: var(--mat-sys-primary);
+  margin: 24px 0 8px;
+  padding: 0 16px;
+}
+
+.section-card {
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.terms-card {
+  margin-top: 8px;
+}
+
+.language-group {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 8px;
+}
+
+.terms-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  min-height: 24px;
+  text-decoration: none;
+  color: var(--mat-sys-on-surface);
+}
+
+.terms-link span:first-child {
+  flex: 1 1 auto;
+}
+
+.terms-link:hover {
+  background: color-mix(in srgb, var(--mat-sys-on-surface) 8%, transparent);
+}
+
+.terms-link .material-icons {
+  color: var(--mat-sys-primary);
+}
+
+.about {
+  padding: 0 16px;
+}
+
+.about-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.app-name {
+  font: var(--mat-sys-title-medium);
+  font-weight: 700;
+}
+
+.version {
+  margin-left: auto;
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.legalese {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 8px 0 0;
+}

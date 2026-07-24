@@ -1,0 +1,58 @@
+:host {
+  display: block;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+
+.page-title {
+  font: var(--mat-sys-headline-medium);
+  margin: 8px 0 8px;
+}
+
+.hint {
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0 0 8px;
+}
+
+.citation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.citation-list li + li {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.citation {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  text-decoration: none;
+  color: var(--mat-sys-on-surface);
+}
+
+.citation:hover {
+  background: color-mix(
+    in srgb,
+    var(--mat-sys-on-surface) 8%,
+    transparent
+  );
+}
+
+.citation-text {
+  flex: 1 1 auto;
+  font: var(--mat-sys-body-medium);
+}
+
+.open-icon {
+  flex: 0 0 auto;
+  color: var(--mat-sys-primary);
+}
