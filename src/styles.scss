@@ -1,11 +1,15 @@
 @use '@angular/material' as mat;
+@use './theme-colors' as theme;
 
 html {
   color-scheme: light dark;
 
+  // JSVS seed color (#2D6A7B), the same Material 3 seed used by clti_risk
+  // (see theme-colors.scss, generated via `ng generate @angular/material:m3-theme`).
   @include mat.theme((
     color: (
-      primary: mat.$cyan-palette,
+      primary: theme.$primary-palette,
+      tertiary: theme.$tertiary-palette,
       theme-type: color-scheme,
     ),
     typography: (
@@ -14,12 +18,6 @@ html {
     ),
     density: 0,
   ));
-
-  /* JSVS Color (#2D6A7B) Material 3 primary token overrides */
-  --mat-sys-primary: light-dark(#2d6a7b, #84d3eb);
-  --mat-sys-on-primary: light-dark(#ffffff, #003643);
-  --mat-sys-primary-container: light-dark(#b5ebfc, #004e5e);
-  --mat-sys-on-primary-container: light-dark(#001f27, #b5ebfc);
 }
 
 html,
