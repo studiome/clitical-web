@@ -186,7 +186,6 @@ export class QuestionForm {
             kind: 'select',
             key: 'rutherford',
             label: t.questionRutherfordTitle,
-            description: t.questionRutherfordSubtitle,
             options: [
               { value: 'class4', label: t.class4 },
               { value: 'class5', label: t.class5 },

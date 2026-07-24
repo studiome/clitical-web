@@ -80,6 +80,10 @@ describe('QuestionForm', () => {
     }
   });
 
+  it('has no description under the Rutherford Classification question', () => {
+    expect(text()).not.toContain('classes 4, 5, or 6');
+  });
+
   it('stores numeric input values', async () => {
     const age: HTMLInputElement = fixture.nativeElement.querySelector('#age-input');
     age.value = '65';
