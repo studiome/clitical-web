@@ -1,59 +1,35 @@
 @use '@angular/material' as mat;
 
-@include mat.core();
-
-$light-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$cyan-palette,
-  ),
-  typography: (
-    plain-family: "'Noto Sans JP', Roboto, sans-serif",
-    brand-family: "'Noto Sans JP', Roboto, sans-serif",
-  ),
-));
-
-$dark-theme: mat.define-theme((
-  color: (
-    theme-type: dark,
-    primary: mat.$cyan-palette,
-  ),
-  typography: (
-    plain-family: "'Noto Sans JP', Roboto, sans-serif",
-    brand-family: "'Noto Sans JP', Roboto, sans-serif",
-  ),
-));
-
 html {
-  @include mat.all-component-themes($light-theme);
+  color-scheme: light dark;
 
-  /* JSVS Color (#2D6A7B) Material 3 Primary Token Overrides */
-  --mat-sys-primary: #2D6A7B;
-  --mat-sys-on-primary: #ffffff;
-  --mat-sys-primary-container: #b5ebfc;
-  --mat-sys-on-primary-container: #001f27;
-  --mat-sys-primary-fixed: #b5ebfc;
-  --mat-sys-primary-fixed-dim: #84d3eb;
-  --mat-sys-on-primary-fixed: #001f27;
-  --mat-sys-on-primary-fixed-variant: #004e5e;
+  @include mat.theme((
+    color: (
+      primary: mat.$cyan-palette,
+      theme-type: color-scheme,
+    ),
+    typography: (
+      plain-family: "'Noto Sans JP', Roboto, sans-serif",
+      brand-family: "'Noto Sans JP', Roboto, sans-serif",
+    ),
+    density: 0,
+  ));
+
+  /* JSVS Color (#2D6A7B) Material 3 primary token overrides */
+  --mat-sys-primary: light-dark(#2d6a7b, #84d3eb);
+  --mat-sys-on-primary: light-dark(#ffffff, #003643);
+  --mat-sys-primary-container: light-dark(#b5ebfc, #004e5e);
+  --mat-sys-on-primary-container: light-dark(#001f27, #b5ebfc);
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    @include mat.all-component-colors($dark-theme);
-
-    --mat-sys-primary: #84d3eb;
-    --mat-sys-on-primary: #003643;
-    --mat-sys-primary-container: #004e5e;
-    --mat-sys-on-primary-container: #b5ebfc;
-  }
-}
-
-html, body {
+html,
+body {
   height: 100%;
 }
 
 body {
   margin: 0;
-  font-family: 'Noto Sans JP', Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Noto Sans JP', Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
 }

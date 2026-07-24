@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.page-title {
+  font: var(--mat-sys-headline-medium);
+  margin: 8px 0 16px;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.risk-value {
+  font: var(--mat-sys-display-medium);
+  text-align: center;
+  margin: 16px 0 0;
+}
+
+.risk-class {
+  font: var(--mat-sys-headline-small);
+  text-align: center;
+  margin: 8px 0 16px;
+}
+
+.back-button {
+  margin-top: 24px;
+}
+
+@media (max-width: 599px) {
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+}

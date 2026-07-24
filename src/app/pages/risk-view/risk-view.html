@@ -1,0 +1,61 @@
+@if (risk(); as r) {
+  <h1 class="page-title">{{ t().result }}</h1>
+  <div class="result-grid">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ t().predicted30DAD }}</mat-card-title>
+        <mat-card-subtitle>{{ t().predicted30DADDescription }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="risk-value">{{ percent(r.predicted30DDeathOrAmputation, 1) }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ t().predicted30DMALE }}</mat-card-title>
+        <mat-card-subtitle>{{ t().predicted30DMALEDescription }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="risk-value">{{ percent(r.predicted30DMALE, 1) }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ t().predicted2yrOS }}</mat-card-title>
+        <mat-card-subtitle>{{ t().predicted2yrOSDescription }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="risk-value">{{ percent(r.predictedOS, 0) }}</p>
+        <p class="risk-class">{{ osRiskLabel() }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ t().predicted2yrAFS }}</mat-card-title>
+        <mat-card-subtitle>{{ t().predicted2yrAFSDescription }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="risk-value">{{ percent(r.predictedAFS, 0) }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ t().gnri }}</mat-card-title>
+        <mat-card-subtitle>{{ t().gnriDescription }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="risk-value">{{ fixed(r.gnri, 1) }}</p>
+        <p class="risk-class">{{ gnriRiskLabel() }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <button matButton="outlined" class="back-button" (click)="backToForm()">
+    <mat-icon aria-hidden="true">arrow_back</mat-icon>
+    {{ t().backToForm }}
+  </button>
+}

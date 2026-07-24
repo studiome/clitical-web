@@ -1,0 +1,20 @@
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+.app-toolbar .app-title {
+  font: var(--mat-sys-title-large);
+  margin: 0;
+}
+
+.app-toolbar button {
+  color: var(--mat-sys-on-primary);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}

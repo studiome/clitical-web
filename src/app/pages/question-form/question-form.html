@@ -1,0 +1,62 @@
+<h1 class="page-title">{{ t().questionFormTitle }}</h1>
+
+<div class="sections">
+  @for (section of sections(); track section.id) {
+    <section [attr.aria-labelledby]="section.id">
+      <h2 [id]="section.id" class="section-title">{{ section.title }}</h2>
+      <div class="section-card">
+        @for (row of section.rows; track row.key) {
+          @switch (row.kind) {
+            @case ('switch') {
+              <app-switch-row
+                [attr.data-question]="row.key"
+                [label]="row.label"
+                [description]="row.description ?? ''"
+                [checked]="boolValue(row.key)"
+                (checkedChange)="setBool(row.key, $event)"
+              />
+            }
+            @case ('select') {
+              <app-select-row
+                [attr.data-question]="row.key"
+                [label]="row.label"
+                [description]="row.description ?? ''"
+                [options]="row.options"
+                [value]="enumValue(row.key)"
+                (valueChange)="setEnum(row.key, $event)"
+              />
+            }
+            @case ('number') {
+              <div class="row number-row" [attr.data-question]="row.key">
+                <label class="row-label" [for]="row.inputId">{{ row.label }}</label>
+                <mat-form-field
+                  appearance="outline"
+                  class="row-control"
+                  subscriptSizing="dynamic"
+                >
+                  <input
+                    matInput
+                    [id]="row.inputId"
+                    type="number"
+                    [attr.inputmode]="row.inputMode"
+                    [formField]="numberField(row.key)"
+                  />
+                </mat-form-field>
+              </div>
+            }
+          }
+        }
+      </div>
+    </section>
+  }
+</div>
+
+<div class="actions">
+  <button matButton="filled" class="analyze-button" (click)="analyze()">
+    <mat-icon aria-hidden="true">analytics</mat-icon>
+    {{ t().predictRisks }}
+  </button>
+  <button matButton="outlined" class="reset-button" (click)="reset()">
+    {{ t().reset }}
+  </button>
+</div>

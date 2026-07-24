@@ -1,0 +1,105 @@
+:host {
+  display: block;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+
+.page-title {
+  font: var(--mat-sys-headline-medium);
+  margin: 8px 0 8px;
+}
+
+.section-title {
+  font: var(--mat-sys-title-small);
+  font-weight: 700;
+  color: var(--mat-sys-primary);
+  margin: 24px 0 8px;
+  padding: 0 16px;
+}
+
+.section-card {
+  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.section-card > * + * {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+app-switch-row,
+app-select-row {
+  display: block;
+}
+
+.number-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 56px;
+  padding: 8px 16px;
+}
+
+.number-row .row-label {
+  flex: 1 1 auto;
+  font: var(--mat-sys-body-large);
+}
+
+.number-row .row-control {
+  flex: 0 0 auto;
+  width: 180px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.analyze-button,
+.reset-button {
+  width: 100%;
+  height: 48px;
+}
+
+.reset-button {
+  --mat-outlined-button-label-text-color: var(--mat-sys-error);
+  --mat-outlined-button-state-layer-color: var(--mat-sys-error);
+}
+
+/* compact phones: edge-to-edge list like the native apps */
+@media (max-width: 599px) {
+  :host {
+    padding: 8px 8px 32px;
+  }
+
+  .number-row .row-control {
+    width: 140px;
+  }
+}
+
+/* expanded layout: two masonry columns of section cards */
+@media (min-width: 1100px) {
+  :host {
+    max-width: 1280px;
+  }
+
+  .sections {
+    columns: 2;
+    column-gap: 24px;
+  }
+
+  .sections section {
+    break-inside: avoid;
+    margin-bottom: 8px;
+  }
+
+  .actions {
+    max-width: 628px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
