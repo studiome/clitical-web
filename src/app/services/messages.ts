@@ -32,8 +32,6 @@ const EN = {
   questionCKDSubtitle:
     'No: 60 or higher, G3: 30-59, G4: 15-29, G5: below 15, G5D: below 15 in haemodialysis. *eGFR: the estimated glomerular filtration rate',
   questionMalignantTitle: 'Malignant neoplasm',
-  questionMalignantSubtitle:
-    'absent, past history of malignant neoplasm, or present under treatment',
   questionAILesionTitle: 'Aorto-Iliac',
   questionAILesionSubtitle: 'aorto-iliac occlusive lesion present or absent',
   questionFPLesionTitle: 'Femoro-Popliteal',
@@ -154,7 +152,6 @@ const JA: Messages = {
   questionCKDSubtitle:
     '正常: 60以上, G3: 30-59, G4: 15-29, G5: 15以下, G5D: 透析 *eGFR: 推定糸球体濾過量',
   questionMalignantTitle: '悪性新生物',
-  questionMalignantSubtitle: 'なし, 既往歴あり, 治療中から選んでください。',
   questionAILesionTitle: '大動脈腸骨動脈領域病変',
   questionAILesionSubtitle: '',
   questionFPLesionTitle: '大腿膝窩領域病変',

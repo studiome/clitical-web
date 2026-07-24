@@ -88,6 +88,10 @@ describe('QuestionForm', () => {
     expect(text()).not.toContain('Ambulatory: able to walk');
   });
 
+  it('has no description under the Malignant neoplasm question', () => {
+    expect(text()).not.toContain('past history of malignant neoplasm');
+  });
+
   it('stores numeric input values', async () => {
     const age: HTMLInputElement = fixture.nativeElement.querySelector('#age-input');
     age.value = '65';

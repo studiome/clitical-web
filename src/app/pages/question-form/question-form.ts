@@ -267,7 +267,6 @@ export class QuestionForm {
             kind: 'select',
             key: 'malignant',
             label: t.questionMalignantTitle,
-            description: t.questionMalignantSubtitle,
             options: [
               { value: 'no', label: t.noMalignancy },
               { value: 'pastHistory', label: t.pastHistory },
