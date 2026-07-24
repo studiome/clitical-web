@@ -20,8 +20,6 @@ const EN = {
   questionAlbTitle: 'Serum Albumin [g/dl]',
   questionAlbSubtitle: 'Enter albumin [g/dl].',
   questionActivityTitle: 'Activity',
-  questionActivitySubtitle:
-    'Ambulatory: able to walk, Wheelchair: unable to walk but could stand on their own legs during bed to wheelchair transfer, Immobile: full assistance is indispensable',
   questionCHFTitle: 'Congestive heart failure',
   questionCHFSubtitle:
     'absent or present: a history of admission due to CHF or clinical symptoms of CHF confirmed on echocardiography or absence of clinical symptoms but clearly reduced cardiac function on echocardiography',
@@ -145,7 +143,6 @@ const JA: Messages = {
   questionAlbTitle: 'アルブミン値 [g/dl]',
   questionAlbSubtitle: 'アルブミン値 [g/dl]を入力してください。',
   questionActivityTitle: 'ADL',
-  questionActivitySubtitle: '独歩, 車いす, 寝たきりから選んでください。',
   questionCHFTitle: 'うっ血性心不全',
   questionCHFSubtitle:
     'ありには、心不全入院歴あり・有症状の場合及びエコーでの心機能低下を含む。',

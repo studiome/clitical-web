@@ -84,6 +84,10 @@ describe('QuestionForm', () => {
     expect(text()).not.toContain('classes 4, 5, or 6');
   });
 
+  it('has no description under the Activity (ADL) question', () => {
+    expect(text()).not.toContain('Ambulatory: able to walk');
+  });
+
   it('stores numeric input values', async () => {
     const age: HTMLInputElement = fixture.nativeElement.querySelector('#age-input');
     age.value = '65';

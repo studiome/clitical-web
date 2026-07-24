@@ -125,7 +125,6 @@ export class QuestionForm {
             kind: 'select',
             key: 'activity',
             label: t.questionActivityTitle,
-            description: t.questionActivitySubtitle,
             options: [
               { value: 'ambulatory', label: t.ambulatory },
               { value: 'wheelchair', label: t.wheelchair },
