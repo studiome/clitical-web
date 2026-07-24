@@ -87,6 +87,7 @@ const EN = {
   analysisLesionErrorMessage: 'Error! Check Lesions choice.',
   references: 'References',
   about: 'About',
+  menu: 'Menu',
   tapToOpenLink: 'Tap to open link.',
   appLegalese: '2022 Kazuhiro Miyahara, JSVS, JCLIMB',
   language: 'Language',
@@ -117,7 +118,6 @@ const EN = {
   osMediumRisk: 'Medium Risk',
   osHighRisk: 'High Risk',
   appTerms: 'Terms of service',
-  refreshButtonLabel: 'Refresh Question Form',
   notAvailable: 'N/A',
 };
 
@@ -208,6 +208,7 @@ const JA: Messages = {
   analysisLesionErrorMessage: '動脈病変の領域選択を確認してください。',
   references: '参考文献',
   about: 'このアプリについて',
+  menu: 'メニュー',
   tapToOpenLink: '論文サイトを開きます。',
   appLegalese:
     '2022 発行: 特定非営利法人日本血管外科学会、JCLIMB委員会、ソフトウェア制作: 宮原和洋',
@@ -237,7 +238,6 @@ const JA: Messages = {
   osMediumRisk: '中等度リスク',
   osHighRisk: '高リスク',
   appTerms: '利用規約',
-  refreshButtonLabel: '解答画面を初期化する',
   notAvailable: 'N/A',
 };
 

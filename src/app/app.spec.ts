@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { App } from './app';
 import { routes } from './app.routes';
-import { PatientDataStore } from './services/patient-data-store';
 import { TranslationService } from './services/translation';
 
 describe('App', () => {
@@ -33,13 +32,28 @@ describe('App', () => {
     );
   });
 
-  it('switches language from the toolbar menu', async () => {
+  it('has no reset button in the toolbar', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const langButton: HTMLButtonElement =
-      fixture.nativeElement.querySelector('.language-button');
-    langButton.click();
+    const toolbar: HTMLElement = fixture.nativeElement.querySelector('mat-toolbar');
+    expect(toolbar.querySelector('.reset-button')).toBeNull();
+  });
+
+  it('switches language from the language item in the overflow menu', async () => {
+    const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
+    const menuButton: HTMLButtonElement =
+      fixture.nativeElement.querySelector('.menu-button');
+    menuButton.click();
+    await fixture.whenStable();
+
+    const languageItem = [
+      ...document.querySelectorAll<HTMLElement>('[mat-menu-item]'),
+    ].find((el) => el.textContent?.includes('Language'));
+    expect(languageItem).toBeTruthy();
+    languageItem!.click();
+    await fixture.whenStable();
+
     const jaOption = [...document.querySelectorAll<HTMLElement>('[mat-menu-item]')].find(
       (el) => el.textContent?.includes('日本語'),
     );
@@ -47,19 +61,5 @@ describe('App', () => {
     jaOption!.click();
     await fixture.whenStable();
     expect(TestBed.inject(TranslationService).locale()).toBe('ja');
-  });
-
-  it('resets patient data from the toolbar', async () => {
-    const store = TestBed.inject(PatientDataStore);
-    store.setField('sex', 'male');
-    store.numbers.set({ age: 65, heightCm: 150, weight: 50, alb: 4 });
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const resetButton: HTMLButtonElement =
-      fixture.nativeElement.querySelector('.reset-button');
-    resetButton.click();
-    await fixture.whenStable();
-    expect(store.data().sex).toBe('female');
-    expect(store.numbers().age).toBeNull();
   });
 });

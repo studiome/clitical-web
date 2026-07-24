@@ -4,12 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 
 import { AboutDialog } from './components/about-dialog';
 import { ReferencesDialog } from './components/references-dialog';
 import { AppLocale } from './services/messages';
-import { PatientDataStore } from './services/patient-data-store';
 import { TranslationService } from './services/translation';
 
 @Component({
@@ -26,19 +25,12 @@ import { TranslationService } from './services/translation';
 })
 export class App {
   private readonly dialog = inject(MatDialog);
-  private readonly router = inject(Router);
-  private readonly store = inject(PatientDataStore);
   private readonly translation = inject(TranslationService);
 
   protected readonly t = this.translation.t;
 
   protected setLocale(locale: AppLocale): void {
     this.translation.setLocale(locale);
-  }
-
-  protected async reset(): Promise<void> {
-    this.store.reset();
-    await this.router.navigateByUrl('/');
   }
 
   protected openReferences(): void {

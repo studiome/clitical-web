@@ -3,36 +3,19 @@
   <span class="spacer"></span>
   <button
     matIconButton
-    class="reset-button"
-    [attr.aria-label]="t().refreshButtonLabel"
-    (click)="reset()"
-  >
-    <mat-icon aria-hidden="true">refresh</mat-icon>
-  </button>
-  <button
-    matIconButton
-    class="language-button"
-    [attr.aria-label]="t().language"
-    [matMenuTriggerFor]="languageMenu"
-  >
-    <mat-icon aria-hidden="true">language</mat-icon>
-  </button>
-  <button
-    matIconButton
-    class="info-button"
-    [attr.aria-label]="t().about"
+    class="menu-button"
+    [attr.aria-label]="t().menu"
     [matMenuTriggerFor]="infoMenu"
   >
     <mat-icon aria-hidden="true">more_vert</mat-icon>
   </button>
 </mat-toolbar>
 
-<mat-menu #languageMenu>
-  <button mat-menu-item (click)="setLocale('ja')">{{ t().ja }}</button>
-  <button mat-menu-item (click)="setLocale('en')">{{ t().en }}</button>
-</mat-menu>
-
 <mat-menu #infoMenu>
+  <button mat-menu-item [matMenuTriggerFor]="languageMenu">
+    <mat-icon aria-hidden="true">language</mat-icon>
+    <span>{{ t().language }}</span>
+  </button>
   <button mat-menu-item (click)="openReferences()">
     <mat-icon aria-hidden="true">article</mat-icon>
     <span>{{ t().references }}</span>
@@ -50,6 +33,11 @@
     <mat-icon aria-hidden="true">handshake</mat-icon>
     <span>{{ t().appTerms }}</span>
   </a>
+</mat-menu>
+
+<mat-menu #languageMenu>
+  <button mat-menu-item (click)="setLocale('ja')">{{ t().ja }}</button>
+  <button mat-menu-item (click)="setLocale('en')">{{ t().en }}</button>
 </mat-menu>
 
 <main>
