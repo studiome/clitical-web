@@ -27,6 +27,12 @@
   width: 180px;
 }
 
+.row-state {
+  flex: 0 0 auto;
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+
 @media (max-width: 419px) {
   .row-control {
     width: 140px;

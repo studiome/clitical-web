@@ -173,9 +173,9 @@ const JA: Messages = {
   questionLocalInfectionSubtitle:
     'あり：膿瘍あり、もしくは次から二つ [発熱・発赤・リンパ管炎・リンパ節腫脹・疼痛]',
   questionDLTitle: '脂質異常症',
-  questionDLSubtitle: 'はい: LDL-C > 140 [mg/dl]',
+  questionDLSubtitle: 'あり: LDL-C > 140 [mg/dl]',
   questionSmokingTitle: '喫煙',
-  questionSmokingSubtitle: 'はい：喫煙中・喫煙歴あり',
+  questionSmokingSubtitle: 'あり：喫煙中・喫煙歴あり',
   questionContraTitle: '対側動脈病変',
   questionContraSubtitle: 'ありには治療後も含む。',
   questionOtherLesionTitle: 'その他血管病変',

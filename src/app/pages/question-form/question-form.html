@@ -12,6 +12,8 @@
                 [attr.data-question]="row.key"
                 [label]="row.label"
                 [description]="row.description ?? ''"
+                [onLabel]="t().yes"
+                [offLabel]="t().no"
                 [checked]="boolValue(row.key)"
                 (checkedChange)="setBool(row.key, $event)"
               />
