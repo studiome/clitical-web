@@ -19,23 +19,7 @@ export interface NavDestination {
 @Component({
   selector: 'app-navigation',
   imports: [MatIconModule, RouterLink],
-  template: `
-    <nav class="nav" [attr.aria-label]="ariaLabel()">
-      @for (destination of destinations(); track destination.id) {
-        <a
-          class="dest"
-          [class.active]="destination.id === activeId()"
-          [routerLink]="destination.link"
-          [attr.aria-current]="destination.id === activeId() ? 'page' : null"
-        >
-          <span class="indicator">
-            <mat-icon aria-hidden="true">{{ destination.icon }}</mat-icon>
-          </span>
-          <span class="dest-label">{{ destination.label }}</span>
-        </a>
-      }
-    </nav>
-  `,
+  templateUrl: './app-navigation.html',
   styleUrl: './app-navigation.scss',
 })
 export class AppNavigation {

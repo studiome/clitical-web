@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { APP_VERSION } from '../../app-version';
-import { TranslationService } from '../../services/translation';
+import { APP_VERSION } from '../app-version';
+import { TranslationService } from '../services/translation';
 import { Settings } from './settings';
 
 function createStorageMock(): Storage {

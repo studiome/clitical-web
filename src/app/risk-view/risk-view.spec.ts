@@ -4,7 +4,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { PatientDataStore } from '../../services/patient-data-store';
+import { PatientDataStore } from '../services/patient-data-store';
 import { RiskView } from './risk-view';
 
 @Component({ template: '' })

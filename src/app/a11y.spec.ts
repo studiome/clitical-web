@@ -6,10 +6,10 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { App } from './app';
 import { routes } from './app.routes';
-import { QuestionForm } from './pages/question-form/question-form';
-import { References } from './pages/references/references';
-import { RiskView } from './pages/risk-view/risk-view';
-import { Settings } from './pages/settings/settings';
+import { QuestionForm } from './question-form/question-form';
+import { References } from './references/references';
+import { RiskView } from './risk-view/risk-view';
+import { Settings } from './settings/settings';
 import { PatientDataStore } from './services/patient-data-store';
 
 // colour-contrast needs a real layout engine, so it cannot run under jsdom;

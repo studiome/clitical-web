@@ -3,22 +3,19 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./pages/question-form/question-form').then((m) => m.QuestionForm),
+    loadComponent: () => import('./question-form/question-form').then((m) => m.QuestionForm),
   },
   {
     path: 'result',
-    loadComponent: () =>
-      import('./pages/risk-view/risk-view').then((m) => m.RiskView),
+    loadComponent: () => import('./risk-view/risk-view').then((m) => m.RiskView),
   },
   {
     path: 'references',
-    loadComponent: () =>
-      import('./pages/references/references').then((m) => m.References),
+    loadComponent: () => import('./references/references').then((m) => m.References),
   },
   {
     path: 'settings',
-    loadComponent: () => import('./pages/settings/settings').then((m) => m.Settings),
+    loadComponent: () => import('./settings/settings').then((m) => m.Settings),
   },
   { path: '**', redirectTo: '' },
 ];

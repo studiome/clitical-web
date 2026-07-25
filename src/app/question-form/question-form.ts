@@ -7,11 +7,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
-import { SelectOption, SelectRow } from '../../components/select-row';
-import { SwitchRow } from '../../components/switch-row';
-import { PatientData } from '../../models/patient-data';
-import { NumericAnswers, PatientDataStore } from '../../services/patient-data-store';
-import { TranslationService } from '../../services/translation';
+import { PatientData } from '../models/patient-data';
+import { NumericAnswers, PatientDataStore } from '../services/patient-data-store';
+import { TranslationService } from '../services/translation';
+import { SelectOption, SelectRow } from './select-row/select-row';
+import { SwitchRow } from './switch-row/switch-row';
 
 type BooleanField = {
   [K in keyof PatientData]: PatientData[K] extends boolean ? K : never;

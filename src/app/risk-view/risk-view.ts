@@ -4,9 +4,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 
-import { GnriRisk, OsRisk } from '../../models/patient-risk';
-import { PatientDataStore } from '../../services/patient-data-store';
-import { TranslationService } from '../../services/translation';
+import { GnriRisk, OsRisk } from '../models/patient-risk';
+import { PatientDataStore } from '../services/patient-data-store';
+import { TranslationService } from '../services/translation';
 
 @Component({
   selector: 'app-risk-view',

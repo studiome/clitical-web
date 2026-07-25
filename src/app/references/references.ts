@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 
-import { TranslationService } from '../../services/translation';
+import { TranslationService } from '../services/translation';
 
 interface Citation {
   text: string;
@@ -9,25 +9,7 @@ interface Citation {
 
 @Component({
   selector: 'app-references',
-  template: `
-    <h1 class="page-title">{{ t().references }}</h1>
-    <p class="hint">{{ t().tapToOpenLink }}</p>
-    <ul class="citation-list">
-      @for (citation of citations; track citation.url) {
-        <li>
-          <a
-            class="citation"
-            [href]="citation.url"
-            target="_blank"
-            rel="noopener"
-          >
-            <span class="citation-text">{{ citation.text }}</span>
-            <span class="material-icons open-icon" aria-hidden="true">open_in_new</span>
-          </a>
-        </li>
-      }
-    </ul>
-  `,
+  templateUrl: './references.html',
   styleUrl: './references.scss',
 })
 export class References {

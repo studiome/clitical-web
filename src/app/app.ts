@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 
-import { AppNavigation, NavDestination } from './components/app-navigation';
+import { AppNavigation, NavDestination } from './navigation/app-navigation';
 import { TranslationService } from './services/translation';
 
 @Component({

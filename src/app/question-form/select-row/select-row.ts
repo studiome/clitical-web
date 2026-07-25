@@ -14,29 +14,8 @@ let nextSelectRowId = 0;
 @Component({
   selector: 'app-select-row',
   imports: [MatFormFieldModule, MatSelectModule],
-  template: `
-    <div class="row">
-      <div class="row-text">
-        <span class="row-label">{{ label() }}</span>
-        @if (description()) {
-          <span class="row-description" [id]="descriptionId">{{ description() }}</span>
-        }
-      </div>
-      <mat-form-field appearance="outline" class="row-control" subscriptSizing="dynamic">
-        <mat-select
-          [value]="value()"
-          [aria-label]="label()"
-          [attr.aria-describedby]="ariaDescribedby()"
-          (selectionChange)="onChange($event)"
-        >
-          @for (option of options(); track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-  `,
-  styleUrl: './row.scss',
+  templateUrl: './select-row.html',
+  styleUrl: '../row.scss',
 })
 export class SelectRow {
   readonly label = input.required<string>();

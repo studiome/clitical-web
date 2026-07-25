@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 
-import { APP_VERSION } from '../../app-version';
-import { AppLocale } from '../../services/messages';
-import { TranslationService } from '../../services/translation';
+import { APP_VERSION } from '../app-version';
+import { AppLocale } from '../services/messages';
+import { TranslationService } from '../services/translation';
 
 @Component({
   selector: 'app-settings',

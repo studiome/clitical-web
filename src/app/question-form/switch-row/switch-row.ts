@@ -8,34 +8,8 @@ let nextSwitchRowId = 0;
 @Component({
   selector: 'app-switch-row',
   imports: [MatSlideToggleModule],
-  template: `
-    <div class="row">
-      <div class="row-text">
-        <span class="row-label">{{ label() }}</span>
-        @if (description()) {
-          <span class="row-description" [id]="descriptionId">{{ description() }}</span>
-        }
-      </div>
-      @if (stateText(); as state) {
-        <!--
-          Material 3 switch guidance: a visible on/off label is optional and
-          only worth adding when the state isn't self-evident (here, "on"
-          means the clinical finding is present, not a generic
-          enabled/disabled toggle). Because mat-slide-toggle already exposes
-          role="switch" + aria-checked, this text is aria-hidden so screen
-          readers don't announce the state twice.
-        -->
-        <span class="row-state" aria-hidden="true">{{ state }}</span>
-      }
-      <mat-slide-toggle
-        [checked]="checked()"
-        [aria-label]="label()"
-        [aria-describedby]="ariaDescribedby()"
-        (change)="onChange($event)"
-      />
-    </div>
-  `,
-  styleUrl: './row.scss',
+  templateUrl: './switch-row.html',
+  styleUrl: '../row.scss',
 })
 export class SwitchRow {
   readonly label = input.required<string>();
