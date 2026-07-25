@@ -1,4 +1,4 @@
-import { computed, inject, PLATFORM_ID, Service, signal } from '@angular/core';
+import { computed, DOCUMENT, inject, PLATFORM_ID, Service, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 import { AppLocale, MESSAGES, Messages } from './messages';
@@ -8,6 +8,7 @@ const LOCALE_STORAGE_KEY = 'clitical.locale';
 @Service()
 export class TranslationService {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly document = inject(DOCUMENT);
 
   private readonly currentLocale = signal<AppLocale>(this.initialLocale());
 
@@ -15,9 +16,20 @@ export class TranslationService {
 
   readonly t = computed<Messages>(() => MESSAGES[this.currentLocale()]);
 
+  constructor() {
+    // Not an effect(): the lang attribute must also be correct during SSR
+    // (a single render pass, no reactivity) and deterministically in tests.
+    this.syncDocumentLang();
+  }
+
   setLocale(locale: AppLocale): void {
     this.currentLocale.set(locale);
     this.storage()?.setItem(LOCALE_STORAGE_KEY, locale);
+    this.syncDocumentLang();
+  }
+
+  private syncDocumentLang(): void {
+    this.document.documentElement.lang = this.currentLocale();
   }
 
   private initialLocale(): AppLocale {

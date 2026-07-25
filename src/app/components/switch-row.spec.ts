@@ -79,6 +79,34 @@ describe('SwitchRow', () => {
     expect(state.getAttribute('aria-hidden')).toBe('true');
   });
 
+  it('associates the visible description with the toggle via aria-describedby', async () => {
+    const fixture = TestBed.createComponent(Host);
+    await fixture.whenStable();
+    const toggle: HTMLElement = fixture.nativeElement.querySelector(
+      'button[role="switch"]',
+    );
+    const description: HTMLElement =
+      fixture.nativeElement.querySelector('.row-description');
+    expect(description.id).toBeTruthy();
+    expect(toggle.getAttribute('aria-describedby')).toBe(description.id);
+  });
+
+  it('omits aria-describedby when there is no description', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [SwitchRow],
+      providers: [provideNoopAnimations()],
+    });
+    const fixture = TestBed.createComponent(SwitchRow);
+    fixture.componentRef.setInput('label', 'Fever');
+    fixture.componentRef.setInput('checked', false);
+    await fixture.whenStable();
+    const toggle: HTMLElement = fixture.nativeElement.querySelector(
+      'button[role="switch"]',
+    );
+    expect(toggle.hasAttribute('aria-describedby')).toBe(false);
+  });
+
   it('omits the state text when no on/off labels are provided', async () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({

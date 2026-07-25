@@ -1,6 +1,7 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 
@@ -15,7 +16,10 @@ import { TranslationService } from './services/translation';
 })
 export class App {
   private readonly router = inject(Router);
+  private readonly titleService = inject(Title);
   protected readonly t = inject(TranslationService).t;
+
+  private readonly mainContent = viewChild<ElementRef<HTMLElement>>('mainContent');
 
   private readonly url = toSignal(
     this.router.events.pipe(
@@ -43,4 +47,31 @@ export class App {
     if (url.startsWith('/settings')) return 'settings';
     return 'risk';
   });
+
+  private readonly pageTitle = computed(() => {
+    const t = this.t();
+    const url = this.url();
+    if (url.startsWith('/references')) return t.references;
+    if (url.startsWith('/settings')) return t.settings;
+    if (url.startsWith('/result')) return t.result;
+    return t.questionFormTitle;
+  });
+
+  constructor() {
+    effect(() => {
+      this.titleService.setTitle(`${this.pageTitle()} | ${this.t().appName}`);
+    });
+
+    // Skip the first run: on initial page load focus should stay wherever
+    // the browser puts it, not get stolen away to <main>.
+    let isFirstNavigation = true;
+    effect(() => {
+      this.url();
+      if (isFirstNavigation) {
+        isFirstNavigation = false;
+        return;
+      }
+      this.mainContent()?.nativeElement.focus();
+    });
+  }
 }

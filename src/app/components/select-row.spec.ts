@@ -63,4 +63,29 @@ describe('SelectRow', () => {
     const select: HTMLElement = fixture.nativeElement.querySelector('mat-select');
     expect(select.getAttribute('aria-label')).toBe('Sex');
   });
+
+  it('associates the visible description with the select via aria-describedby', async () => {
+    const fixture = TestBed.createComponent(Host);
+    await fixture.whenStable();
+    const select: HTMLElement = fixture.nativeElement.querySelector('mat-select');
+    const description: HTMLElement =
+      fixture.nativeElement.querySelector('.row-description');
+    expect(description.id).toBeTruthy();
+    expect(select.getAttribute('aria-describedby')).toContain(description.id);
+  });
+
+  it('omits aria-describedby when there is no description', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [SelectRow],
+      providers: [provideNoopAnimations()],
+    });
+    const fixture = TestBed.createComponent(SelectRow);
+    fixture.componentRef.setInput('label', 'Sex');
+    fixture.componentRef.setInput('options', [{ value: 'male', label: 'Male' }]);
+    fixture.componentRef.setInput('value', 'male');
+    await fixture.whenStable();
+    const select: HTMLElement = fixture.nativeElement.querySelector('mat-select');
+    expect(select.hasAttribute('aria-describedby')).toBe(false);
+  });
 });

@@ -1,7 +1,10 @@
-.app-toolbar {
+header {
   position: sticky;
   top: 0;
   z-index: 101;
+}
+
+.app-toolbar {
   background: var(--mat-sys-primary);
   color: var(--mat-sys-on-primary);
 }
@@ -9,6 +12,36 @@
 .app-toolbar .app-title {
   font: var(--mat-sys-title-large);
   margin: 0;
+}
+
+/* Off-screen until focused, per the standard clip/transform skip-link
+   technique (display: none would make it unreachable by keyboard). */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 102;
+  padding: 8px 16px;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-primary);
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+  width: 1px;
+  height: 1px;
+}
+
+/* :focus, not :focus-visible: the link must also reveal itself when focus
+   arrives without the keyboard heuristic, e.g. from a screen reader's
+   virtual cursor. */
+.skip-link:focus {
+  clip: auto;
+  clip-path: none;
+  width: auto;
+  height: auto;
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 2px;
 }
 
 /* Leave room for the fixed navigation: bottom bar on compact, rail on wider. */

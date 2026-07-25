@@ -53,6 +53,11 @@
   background: color-mix(in srgb, var(--mat-sys-on-surface) 8%, transparent);
 }
 
+.terms-link:focus-visible {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
 .terms-link .material-icons {
   color: var(--mat-sys-primary);
 }

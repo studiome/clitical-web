@@ -47,6 +47,11 @@
   );
 }
 
+.citation:focus-visible {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
 .citation-text {
   flex: 1 1 auto;
   font: var(--mat-sys-body-medium);

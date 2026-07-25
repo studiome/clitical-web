@@ -298,6 +298,13 @@ export class QuestionForm {
     return this.numberForm[key];
   }
 
+  // A required field only surfaces as invalid to assistive tech once the
+  // user has had a chance to interact with it (or analyze() touched it).
+  protected numberFieldInvalid(key: NumericField): boolean {
+    const state = this.numberForm[key]();
+    return state.touched() && state.invalid();
+  }
+
   protected reset(): void {
     this.store.reset();
   }
@@ -308,6 +315,13 @@ export class QuestionForm {
       await this.router.navigateByUrl('/result');
       return;
     }
+    // Touch the numeric fields so their invalid state becomes visible
+    // (aria-invalid + mat-error), not just reported via the snackbar.
+    this.numberForm.age().markAsTouched();
+    this.numberForm.heightCm().markAsTouched();
+    this.numberForm.weight().markAsTouched();
+    this.numberForm.alb().markAsTouched();
+
     const t = this.t();
     const message =
       result.source === 'NumberForm'

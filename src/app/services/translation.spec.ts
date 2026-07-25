@@ -60,4 +60,15 @@ describe('TranslationService', () => {
     const jaKeys = Object.keys(service.t()).sort();
     expect(jaKeys).toEqual(enKeys);
   });
+
+  it('sets the document lang attribute on creation', () => {
+    TestBed.inject(TranslationService);
+    expect(document.documentElement.lang).toBe('en');
+  });
+
+  it('updates the document lang attribute when the locale changes', () => {
+    const service = TestBed.inject(TranslationService);
+    service.setLocale('ja');
+    expect(document.documentElement.lang).toBe('ja');
+  });
 });

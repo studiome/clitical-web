@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
@@ -6,6 +6,10 @@ export interface SelectOption {
   value: string;
   label: string;
 }
+
+// Module-level counter for deterministic, SSR/hydration-safe ids (no
+// _IdGenerator, which is a private CDK API).
+let nextSelectRowId = 0;
 
 @Component({
   selector: 'app-select-row',
@@ -15,13 +19,14 @@ export interface SelectOption {
       <div class="row-text">
         <span class="row-label">{{ label() }}</span>
         @if (description()) {
-          <span class="row-description">{{ description() }}</span>
+          <span class="row-description" [id]="descriptionId">{{ description() }}</span>
         }
       </div>
       <mat-form-field appearance="outline" class="row-control" subscriptSizing="dynamic">
         <mat-select
           [value]="value()"
           [aria-label]="label()"
+          [attr.aria-describedby]="ariaDescribedby()"
           (selectionChange)="onChange($event)"
         >
           @for (option of options(); track option.value) {
@@ -39,6 +44,17 @@ export class SelectRow {
   readonly options = input.required<SelectOption[]>();
   readonly value = input.required<string>();
   readonly valueChange = output<string>();
+
+  protected readonly descriptionId = `select-row-description-${nextSelectRowId++}`;
+
+  // MatSelect's aria-describedby input is a plain property, but
+  // MatFormField._syncDescribedByIds() reads/writes the DOM attribute, so
+  // this must be an [attr.] binding for the id to actually land in the DOM.
+  // [aria-label] already announces the label; without this, the visible
+  // row-description text (e.g. the CKD eGFR ranges) is never read out.
+  protected readonly ariaDescribedby = computed<string | null>(() =>
+    this.description() ? this.descriptionId : null,
+  );
 
   protected onChange(event: MatSelectChange<string>): void {
     this.valueChange.emit(event.value);

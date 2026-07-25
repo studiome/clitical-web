@@ -65,5 +65,15 @@ describe('accessibility (axe)', () => {
     await fixture.whenStable();
     await expectNoViolations(fixture.nativeElement);
   });
+
+  // TestBed attaches component fixtures to the real document, so running
+  // against document.body (rather than a detached fragment, as the tests
+  // above do) is what actually exercises document-level rules such as
+  // `region` and `landmark-one-main`.
+  it('document has no axe violations', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    await expectNoViolations(document.body);
+  });
 });
 

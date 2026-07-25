@@ -41,8 +41,12 @@
                     [id]="row.inputId"
                     type="number"
                     [attr.inputmode]="row.inputMode"
+                    [attr.aria-invalid]="numberFieldInvalid(row.key)"
                     [formField]="numberField(row.key)"
                   />
+                  @if (numberFieldInvalid(row.key)) {
+                    <mat-error>{{ t().numberFieldRequiredError }}</mat-error>
+                  }
                 </mat-form-field>
               </div>
             }

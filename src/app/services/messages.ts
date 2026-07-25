@@ -116,6 +116,8 @@ const EN = {
   osHighRisk: 'High Risk',
   appTerms: 'Terms of service',
   notAvailable: 'N/A',
+  skipToContent: 'Skip to main content',
+  numberFieldRequiredError: 'This value is required.',
 };
 
 export type Messages = typeof EN;
@@ -235,6 +237,8 @@ const JA: Messages = {
   osHighRisk: '高リスク',
   appTerms: '利用規約',
   notAvailable: 'N/A',
+  skipToContent: '本文へスキップ',
+  numberFieldRequiredError: '入力してください。',
 };
 
 export const MESSAGES: Record<AppLocale, Messages> = { en: EN, ja: JA };

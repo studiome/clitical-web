@@ -135,6 +135,22 @@ describe('QuestionForm', () => {
     expect(router.url).not.toBe('/result');
   });
 
+  it('marks the empty numeric fields invalid and shows field-level errors when analyze fails', async () => {
+    const button: HTMLButtonElement =
+      fixture.nativeElement.querySelector('.analyze-button');
+    button.click();
+    await fixture.whenStable();
+
+    for (const id of ['age-input', 'height-input', 'weight-input', 'alb-input']) {
+      const input: HTMLInputElement = fixture.nativeElement.querySelector(`#${id}`);
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+    }
+
+    const errors = fixture.nativeElement.querySelectorAll('mat-error');
+    expect(errors.length).toBe(4);
+    expect(errors[0].textContent).toContain('This value is required.');
+  });
+
   it('shows a lesion error when no lesion is selected', async () => {
     store.numbers.set({ age: 65, heightCm: 150, weight: 50, alb: 4 });
     store.setField('hasAILesion', false);

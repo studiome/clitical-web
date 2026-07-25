@@ -1,13 +1,17 @@
-<mat-toolbar class="app-toolbar">
-  <h1 class="app-title">{{ t().appName }}</h1>
-</mat-toolbar>
+<a class="skip-link" href="#main-content">{{ t().skipToContent }}</a>
+
+<header>
+  <mat-toolbar class="app-toolbar">
+    <span class="app-title">{{ t().appName }}</span>
+  </mat-toolbar>
+</header>
+
+<main id="main-content" tabindex="-1" #mainContent>
+  <router-outlet />
+</main>
 
 <app-navigation
   [destinations]="destinations()"
   [activeId]="activeId()"
   [ariaLabel]="t().appName"
 />
-
-<main>
-  <router-outlet />
-</main>

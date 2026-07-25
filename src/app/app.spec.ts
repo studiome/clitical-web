@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { Title } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { App } from './app';
 import { routes } from './app.routes';
+import { PatientDataStore } from './services/patient-data-store';
 
 describe('App', () => {
   beforeEach(async () => {
@@ -78,5 +80,76 @@ describe('App', () => {
 
     const current = fixture.nativeElement.querySelector('nav a[aria-current="page"]');
     expect(current?.textContent).toContain('Risk Assessment');
+  });
+
+  it('orders the shell as skip link, header, main, then navigation for correct focus order', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const root = fixture.nativeElement as HTMLElement;
+    const tags = [...root.children].map((el) => el.tagName.toLowerCase());
+    expect(tags).toEqual(['a', 'header', 'main', 'app-navigation']);
+  });
+
+  it('wraps the toolbar in a header landmark', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const header: HTMLElement = fixture.nativeElement.querySelector('header');
+    expect(header.querySelector('mat-toolbar')).not.toBeNull();
+  });
+
+  it('renders the app title as a span so each page keeps a single h1', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const toolbar: HTMLElement = fixture.nativeElement.querySelector('mat-toolbar');
+    expect(toolbar.querySelector('h1')).toBeNull();
+    expect(toolbar.querySelector('span.app-title')?.textContent).toContain('CLiTICAL');
+  });
+
+  it('provides a skip link that points at the focusable main content', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const root = fixture.nativeElement as HTMLElement;
+    const skipLink: HTMLAnchorElement | null = root.querySelector('a.skip-link');
+    expect(skipLink?.getAttribute('href')).toBe('#main-content');
+    expect(skipLink?.textContent).toContain('Skip to main content');
+
+    const main = root.querySelector('main');
+    expect(main?.id).toBe('main-content');
+    expect(main?.getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('sets a localized document title for the current route', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const titleService = TestBed.inject(Title);
+    expect(titleService.getTitle()).toBe('Patient Data | CLiTICAL');
+
+    await TestBed.inject(Router).navigateByUrl('/references');
+    await fixture.whenStable();
+    expect(titleService.getTitle()).toBe('References | CLiTICAL');
+
+    await TestBed.inject(Router).navigateByUrl('/settings');
+    await fixture.whenStable();
+    expect(titleService.getTitle()).toBe('Settings | CLiTICAL');
+
+    // RiskView redirects back to '/' when there is no calculated risk, so
+    // give the store something to show before navigating there.
+    const store = TestBed.inject(PatientDataStore);
+    store.numbers.set({ age: 65, heightCm: 150, weight: 50, alb: 4 });
+    store.analyze();
+    await TestBed.inject(Router).navigateByUrl('/result');
+    await fixture.whenStable();
+    expect(titleService.getTitle()).toBe('Predicted Risks | CLiTICAL');
+  });
+
+  it('moves focus to the main content on route change, but not on initial load', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const main: HTMLElement = fixture.nativeElement.querySelector('main');
+    expect(document.activeElement).not.toBe(main);
+
+    await TestBed.inject(Router).navigateByUrl('/references');
+    await fixture.whenStable();
+    expect(document.activeElement).toBe(main);
   });
 });
