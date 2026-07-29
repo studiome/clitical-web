@@ -33,11 +33,7 @@
     "@angular/build": "^22.0.7",
     "@angular/cli": "^22.0.7",
     "@angular/compiler-cli": "^22.0.0",
-<<<<<<< HEAD
     "@angular/language-server": "^22.0.8",
-=======
-    "@angular/language-server": "^22.0.7",
->>>>>>> b84055d (feat: add Angular Language Server as a dependency)
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
     "axe-core": "^4.12.1",
