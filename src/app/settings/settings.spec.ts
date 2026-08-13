@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { APP_VERSION } from '../app-version';
 import { TranslationService } from '../services/translation';
 import { Settings } from './settings';
 
@@ -112,7 +111,7 @@ describe('Settings', () => {
     const fixture = TestBed.createComponent(Settings);
     await fixture.whenStable();
     const text = (fixture.nativeElement as HTMLElement).textContent!;
-    expect(text).toContain(APP_VERSION);
+    expect(text).toContain('2.1.0');
     expect(text).toContain('JSVS');
   });
 });
