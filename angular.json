@@ -27,6 +27,7 @@
             ],
             "inlineStyleLanguage": "scss",
             "styles": [
+              "src/fonts.css",
               "src/styles.scss"
             ],
             "server": "src/main.server.ts",
