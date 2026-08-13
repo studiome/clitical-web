@@ -33,7 +33,7 @@ describe('Settings', () => {
     vi.unstubAllGlobals();
   });
 
-  it('renders language, about section and terms link', async () => {
+  it('renders language and about sections with English legal links', async () => {
     const fixture = TestBed.createComponent(Settings);
     await fixture.whenStable();
     const host = fixture.nativeElement as HTMLElement;
@@ -43,10 +43,44 @@ describe('Settings', () => {
     expect(text).toContain('日本語');
     expect(text).toContain('English');
 
-    const terms = host.querySelector<HTMLAnchorElement>('a.terms-link');
-    expect(terms?.getAttribute('href')).toBe('https://studiome.github.io/clti_risk/');
-    expect(terms?.getAttribute('target')).toBe('_blank');
-    expect(terms?.getAttribute('rel')).toContain('noopener');
+    const links = [...host.querySelectorAll<HTMLAnchorElement>('a.legal-link')];
+    expect(links.map((link) => link.querySelector('span')?.textContent)).toEqual([
+      'Terms of Service',
+      'Privacy Policy',
+      'Support',
+    ]);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+      'https://studiome.github.io/clitical-legal/terms/en/',
+      'https://studiome.github.io/clitical-legal/privacy/en/',
+      'https://studiome.github.io/clitical-legal/support/en/',
+    ]);
+    for (const link of links) {
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toContain('noopener');
+    }
+    expect(host.querySelector('.language-group a')).toBeNull();
+  });
+
+  it('uses Japanese legal links when the locale is Japanese', async () => {
+    const translation = TestBed.inject(TranslationService);
+    translation.setLocale('ja');
+    const fixture = TestBed.createComponent(Settings);
+    await fixture.whenStable();
+    const host = fixture.nativeElement as HTMLElement;
+    const links = [
+      ...host.querySelectorAll<HTMLAnchorElement>('a.legal-link'),
+    ];
+
+    expect(links.map((link) => link.querySelector('span')?.textContent)).toEqual([
+      '利用規約',
+      'プライバシーポリシー',
+      'サポート',
+    ]);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+      'https://studiome.github.io/clitical-legal/terms/ja/',
+      'https://studiome.github.io/clitical-legal/privacy/ja/',
+      'https://studiome.github.io/clitical-legal/support/ja/',
+    ]);
   });
 
   it('checks the radio for the current locale', async () => {

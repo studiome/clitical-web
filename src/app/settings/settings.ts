@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
 
 import { APP_VERSION } from '../app-version';
@@ -16,7 +16,25 @@ export class Settings {
   protected readonly t = this.translation.t;
   protected readonly locale = this.translation.locale;
   protected readonly version = APP_VERSION;
-  protected readonly termsUrl = 'https://studiome.github.io/clti_risk/';
+  protected readonly legalLinks = computed(() => {
+    const locale = this.locale();
+    const baseUrl = 'https://studiome.github.io/clitical-legal';
+
+    return [
+      {
+        label: this.t().termsOfService,
+        href: `${baseUrl}/terms/${locale}/`,
+      },
+      {
+        label: this.t().privacyPolicy,
+        href: `${baseUrl}/privacy/${locale}/`,
+      },
+      {
+        label: this.t().support,
+        href: `${baseUrl}/support/${locale}/`,
+      },
+    ];
+  });
 
   protected onLocaleChange(event: MatRadioChange<AppLocale>): void {
     this.translation.setLocale(event.value);

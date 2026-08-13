@@ -14,12 +14,6 @@
     </mat-radio-group>
   </div>
 
-  <div class="section-card terms-card">
-    <a class="terms-link" [href]="termsUrl" target="_blank" rel="noopener">
-      <span>{{ t().appTerms }}</span>
-      <span class="material-icons" aria-hidden="true">open_in_new</span>
-    </a>
-  </div>
 </section>
 
 <section aria-labelledby="about-heading">
@@ -30,5 +24,13 @@
       <span class="version">{{ t().version }}: {{ version }}</span>
     </div>
     <p class="legalese">{{ t().appLegalese }}</p>
+  </div>
+  <div class="section-card legal-links">
+    @for (link of legalLinks(); track link.href) {
+      <a class="legal-link" [href]="link.href" target="_blank" rel="noopener">
+        <span>{{ link.label }}</span>
+        <span class="material-icons" aria-hidden="true">open_in_new</span>
+      </a>
+    }
   </div>
 </section>

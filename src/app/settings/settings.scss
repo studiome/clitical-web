@@ -25,7 +25,7 @@
   overflow: hidden;
 }
 
-.terms-card {
+.legal-links {
   margin-top: 8px;
 }
 
@@ -35,7 +35,7 @@
   padding: 8px 8px;
 }
 
-.terms-link {
+.legal-link {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -45,21 +45,25 @@
   color: var(--mat-sys-on-surface);
 }
 
-.terms-link span:first-child {
+.legal-link span:first-child {
   flex: 1 1 auto;
 }
 
-.terms-link:hover {
+.legal-link:hover {
   background: color-mix(in srgb, var(--mat-sys-on-surface) 8%, transparent);
 }
 
-.terms-link:focus-visible {
+.legal-link:focus-visible {
   outline: 3px solid var(--mat-sys-primary);
   outline-offset: 2px;
 }
 
-.terms-link .material-icons {
+.legal-link .material-icons {
   color: var(--mat-sys-primary);
+}
+
+.legal-link:not(:last-child) {
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
 }
 
 .about {
