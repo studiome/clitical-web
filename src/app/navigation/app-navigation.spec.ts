@@ -68,4 +68,16 @@ describe('AppNavigation', () => {
     expect(current.length).toBe(1);
     expect(current[0].textContent).toContain('References');
   });
+
+  it('allows multi-word labels to wrap instead of truncating them', async () => {
+    const fixture = createFixture('risk');
+    await fixture.whenStable();
+    const label = fixture.nativeElement.querySelector('.dest-label') as HTMLElement;
+    const style = getComputedStyle(label);
+
+    expect(label.textContent).toBe('Risk Assessment');
+    expect(style.whiteSpace).toBe('normal');
+    expect(style.textOverflow).toBe('clip');
+    expect(style.textAlign).toBe('center');
+  });
 });
