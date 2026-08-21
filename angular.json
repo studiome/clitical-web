@@ -23,6 +23,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "exceljs.min.js",
+                "input": "node_modules/exceljs/dist",
+                "output": "vendor/exceljs"
               }
             ],
             "inlineStyleLanguage": "scss",

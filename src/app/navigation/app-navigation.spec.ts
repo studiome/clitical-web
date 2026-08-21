@@ -10,6 +10,7 @@ class Blank {}
 
 const DESTINATIONS: NavDestination[] = [
   { id: 'risk', label: 'Risk Assessment', icon: 'analytics', link: '/' },
+  { id: 'batch', label: 'Batch', icon: 'table_view', link: '/batch' },
   { id: 'references', label: 'References', icon: 'menu_book', link: '/references' },
   { id: 'settings', label: 'Settings', icon: 'settings', link: '/settings' },
 ];
@@ -20,6 +21,7 @@ function createFixture(activeId: string) {
     providers: [
       provideRouter([
         { path: '', component: Blank },
+        { path: 'batch', component: Blank },
         { path: 'references', component: Blank },
         { path: 'settings', component: Blank },
       ]),
@@ -54,7 +56,7 @@ describe('AppNavigation', () => {
     const hrefs = [...host.querySelectorAll<HTMLAnchorElement>('nav a')].map((a) =>
       a.getAttribute('href'),
     );
-    expect(hrefs).toEqual(['/', '/references', '/settings']);
+    expect(hrefs).toEqual(['/', '/batch', '/references', '/settings']);
   });
 
   it('marks only the active destination with aria-current', async () => {

@@ -36,6 +36,9 @@ The prediction models are published by Miyata T. et al. from the JCLIMB registry
 
 - **Bilingual UI** — English and Japanese, auto-detected from the browser locale and overridable in Settings (persisted in `localStorage`; nothing else is).
 - **Installable PWA** — service worker, web manifest and maskable icons; works offline once installed.
+- **Local Excel batch processing** — download a validated template, calculate multiple
+  patients in the browser, review row-level errors and export the results without
+  uploading the workbook to a server. See [Batch Excel processing](docs/batch-excel.md).
 - **Prerendered (SSR)** — every route is prerendered at build time for a fast first paint.
 - **Accessible** — WCAG AA is a project requirement, enforced by automated axe-core checks in the test suite.
 - **Light / dark themes** — follows the OS colour scheme, including the browser chrome tint.
@@ -47,7 +50,7 @@ The prediction models are published by Miyata T. et al. from the JCLIMB registry
 | Framework | Angular 22 (standalone components, signals, native control flow) |
 | UI | Angular Material |
 | Forms | Signal Forms (`@angular/forms/signals`) |
-| Rendering | Angular SSR with full prerendering |
+| Rendering | Angular SSR with full prerendering                               |
 | Testing | Vitest + jsdom, axe-core for accessibility |
 | Hosting | Firebase Hosting, deployed by GitHub Actions |
 
@@ -92,6 +95,7 @@ ng generate component component-name
 ```
 src/app/
 ├── models/            # PatientData and the risk prediction models
+├── batch-processing/  # Local Excel template, validation and batch calculation
 ├── services/          # PatientDataStore (signals), TranslationService, i18n messages
 ├── question-form/     # Patient data entry (Signal Forms) with select/switch rows
 ├── risk-view/         # Predicted risk results

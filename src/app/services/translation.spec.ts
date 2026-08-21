@@ -24,6 +24,7 @@ describe('TranslationService', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
   });
 
@@ -31,6 +32,24 @@ describe('TranslationService', () => {
     const service = TestBed.inject(TranslationService);
     expect(service.locale()).toBe('en');
     expect(service.t().questionSexTitle).toBe('Sex');
+  });
+
+  it('defaults to Japanese when the browser language is Japanese', () => {
+    vi.spyOn(window.navigator, 'language', 'get').mockReturnValue('ja-JP');
+
+    const service = TestBed.inject(TranslationService);
+
+    expect(service.locale()).toBe('ja');
+    expect(document.documentElement.lang).toBe('ja');
+  });
+
+  it('defaults to English when the browser language is not Japanese', () => {
+    vi.spyOn(window.navigator, 'language', 'get').mockReturnValue('fr-FR');
+
+    const service = TestBed.inject(TranslationService);
+
+    expect(service.locale()).toBe('en');
+    expect(document.documentElement.lang).toBe('en');
   });
 
   it('switches messages when locale changes', () => {

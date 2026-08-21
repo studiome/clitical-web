@@ -36,7 +36,7 @@ export class TranslationService {
     if (!this.isBrowser) return 'en';
     const stored = this.storage()?.getItem(LOCALE_STORAGE_KEY);
     if (stored === 'en' || stored === 'ja') return stored;
-    return navigator.language.startsWith('ja') ? 'ja' : 'en';
+    return navigator.language.toLowerCase().startsWith('ja') ? 'ja' : 'en';
   }
 
   private storage(): Storage | null {

@@ -32,6 +32,12 @@ export class App {
   protected readonly destinations = computed<NavDestination[]>(() => [
     { id: 'risk', label: this.t().riskAssessmentTab, icon: 'analytics', link: '/' },
     {
+      id: 'batch',
+      label: this.t().batchProcessingTab,
+      icon: 'table_view',
+      link: '/batch',
+    },
+    {
       id: 'references',
       label: this.t().references,
       icon: 'menu_book',
@@ -43,6 +49,7 @@ export class App {
   // The result screen is part of the risk flow, so keep Risk highlighted there.
   protected readonly activeId = computed(() => {
     const url = this.url();
+    if (url.startsWith('/batch')) return 'batch';
     if (url.startsWith('/references')) return 'references';
     if (url.startsWith('/settings')) return 'settings';
     return 'risk';
@@ -51,6 +58,7 @@ export class App {
   private readonly pageTitle = computed(() => {
     const t = this.t();
     const url = this.url();
+    if (url.startsWith('/batch')) return t.batchProcessingTitle;
     if (url.startsWith('/references')) return t.references;
     if (url.startsWith('/settings')) return t.settings;
     if (url.startsWith('/result')) return t.result;
