@@ -1,6 +1,6 @@
 # CLiTICAL
 
-**C**hronic **Li**mb-**T**hreatening **I**schaemia **Cal**culator — a bilingual (English / 日本語) web app that predicts peri-procedural and mid-term outcomes of revascularisation for chronic limb-threatening ischaemia (CLTI).
+**C**hronic **Li**mb-**T**hreatening **I**schaemia risk **CAL**culator — a bilingual (English / 日本語) web app that predicts peri-procedural and mid-term outcomes of revascularisation for chronic limb-threatening ischaemia (CLTI).
 
 [![Live app](https://img.shields.io/badge/live-clitical.web.app-2D6A7B)](https://clitical.web.app)
 [![Angular](https://img.shields.io/badge/Angular-22-dd0031)](https://angular.dev)
