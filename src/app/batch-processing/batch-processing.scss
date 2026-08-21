@@ -67,6 +67,12 @@
   gap: 8px;
 }
 
+.template-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .file-control label {
   font: var(--mat-sys-label-large);
 }

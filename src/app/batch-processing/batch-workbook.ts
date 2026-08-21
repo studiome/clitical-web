@@ -1,13 +1,63 @@
 import type ExcelJS from 'exceljs';
 
 import { APP_VERSION } from '../app-version';
+import { AppLocale, MESSAGES, MessageKey } from '../services/messages';
 import { BatchCalculationResult, RawBatchRow } from './batch-calculation';
 import { BATCH_FIELDS, BatchField, formatCaseId } from './batch-schema';
 
-const DATA_SHEET = 'Data Entry';
-const GUIDE_SHEET = 'Input Guide';
 const RESULT_SHEET = 'Results';
 const TEMPLATE_ROW_COUNT = 100;
+
+export type BatchTemplateLocale = AppLocale;
+
+const TEMPLATE_TEXT = {
+  en: {
+    dataSheet: 'Data Entry',
+    guideSheet: 'Input Guide',
+    guideHeaders: ['Field code', 'Question name', 'Allowed values'],
+    freeText: 'Any text',
+    invalidValue: 'Invalid value',
+    chooseOne: 'Choose one of',
+    invalidNumber: 'Invalid number',
+    enterRange: 'Enter a value in the permitted range.',
+  },
+  ja: {
+    dataSheet: '症例入力',
+    guideSheet: '入力ガイド',
+    guideHeaders: ['フィールドコード', '設問名', '入力可能な値'],
+    freeText: '任意の文字列',
+    invalidValue: '入力値が不正です',
+    chooseOne: '次から選択してください',
+    invalidNumber: '数値が不正です',
+    enterRange: '許容範囲内の数値を入力してください。',
+  },
+} as const;
+
+const QUESTION_LABEL_KEYS: Record<Exclude<BatchField, 'caseId'>, MessageKey> = {
+  sex: 'questionSexTitle',
+  age: 'questionAgeTitle',
+  heightCm: 'questionHeightTitle',
+  weight: 'questionWeightTitle',
+  alb: 'questionAlbTitle',
+  activity: 'questionActivityTitle',
+  hasCHF: 'questionCHFTitle',
+  hasCVD: 'questionCVDTitle',
+  ckd: 'questionCKDTitle',
+  malignant: 'questionMalignantTitle',
+  hasAILesion: 'questionAILesionTitle',
+  hasFPLesion: 'questionFPLesionTitle',
+  hasBKLesion: 'questionBKLesionTitle',
+  isUrgent: 'questionUrgentTitle',
+  hasFever: 'questionFeverTitle',
+  hasAbnormalWBC: 'questionAbnormalWBCTitle',
+  hasLocalInfection: 'questionLocalInfectionTitle',
+  hasDyslipidemia: 'questionDLTitle',
+  isSmoking: 'questionSmokingTitle',
+  hasCAD: 'questionCADTitle',
+  hasContraLateralLesion: 'questionContraTitle',
+  hasOtherVD: 'questionOtherLesionTitle',
+  rutherford: 'questionRutherfordTitle',
+};
 
 type ExcelJSRuntime = typeof ExcelJS;
 
@@ -38,14 +88,6 @@ async function loadExcelJS(): Promise<ExcelJSRuntime> {
   return runtime.cliticalExcelJSLoading;
 }
 
-const ENUM_VALUES: Partial<Record<BatchField, readonly string[]>> = {
-  sex: ['male', 'female'],
-  activity: ['ambulatory', 'wheelchair', 'immobile'],
-  ckd: ['normal', 'g3', 'g4', 'g5', 'g5D'],
-  malignant: ['no', 'pastHistory', 'underTreatment'],
-  rutherford: ['class4', 'class5', 'class6'],
-};
-
 const NUMERIC_VALIDATION: Partial<
   Record<BatchField, { type: 'whole' | 'decimal'; min: number; max: number }>
 > = {
@@ -72,81 +114,77 @@ const BOOLEAN_FIELDS = new Set<BatchField>([
   'hasOtherVD',
 ]);
 
-const FIELD_GUIDE: Record<BatchField, { ja: string; en: string; allowed: string; unit: string }> = {
-  caseId: {
-    ja: '仮症例ID（個人を特定できる情報は入力しない）',
-    en: 'Temporary case ID (no direct identifiers)',
-    allowed: '任意の文字列',
-    unit: '',
-  },
-  sex: { ja: '性別', en: 'Sex', allowed: 'male / female', unit: '' },
-  age: { ja: '年齢', en: 'Age', allowed: '1–150の整数', unit: 'years' },
-  heightCm: { ja: '身長', en: 'Body height', allowed: '0より大きく300以下', unit: 'cm' },
-  weight: { ja: '体重', en: 'Body weight', allowed: '0より大きく1000以下', unit: 'kg' },
-  alb: { ja: '血清アルブミン', en: 'Serum albumin', allowed: '0より大きく20以下', unit: 'g/dL' },
-  activity: { ja: 'ADL', en: 'Activity', allowed: 'ambulatory / wheelchair / immobile', unit: '' },
-  hasCHF: { ja: 'うっ血性心不全', en: 'Congestive heart failure', allowed: 'yes / no', unit: '' },
-  hasCVD: { ja: '脳血管障害', en: 'Cerebrovascular disease', allowed: 'yes / no', unit: '' },
-  ckd: {
-    ja: '慢性腎臓病',
-    en: 'Chronic kidney disease',
-    allowed: 'normal / g3 / g4 / g5 / g5D',
-    unit: '',
-  },
-  malignant: {
-    ja: '悪性新生物',
-    en: 'Malignant neoplasm',
-    allowed: 'no / pastHistory / underTreatment',
-    unit: '',
-  },
-  hasAILesion: {
-    ja: '大動脈腸骨動脈領域病変',
-    en: 'Aorto-iliac lesion',
-    allowed: 'yes / no',
-    unit: '',
-  },
-  hasFPLesion: {
-    ja: '大腿膝窩領域病変',
-    en: 'Femoro-popliteal lesion',
-    allowed: 'yes / no',
-    unit: '',
-  },
-  hasBKLesion: {
-    ja: '膝下膝窩以下末梢領域病変',
-    en: 'Infrapopliteal lesion',
-    allowed: 'yes / no',
-    unit: '',
-  },
-  isUrgent: { ja: '緊急血行再建', en: 'Urgent revascularisation', allowed: 'yes / no', unit: '' },
-  hasFever: { ja: '発熱', en: 'Fever', allowed: 'yes / no', unit: '' },
-  hasAbnormalWBC: { ja: '白血球数異常', en: 'Abnormal WBC', allowed: 'yes / no', unit: '' },
-  hasLocalInfection: { ja: '局所感染', en: 'Local infection', allowed: 'yes / no', unit: '' },
-  hasDyslipidemia: { ja: '脂質異常症', en: 'Dyslipidemia', allowed: 'yes / no', unit: '' },
-  isSmoking: {
-    ja: '喫煙・喫煙歴',
-    en: 'Smoking or smoking history',
-    allowed: 'yes / no',
-    unit: '',
-  },
-  hasCAD: { ja: '冠動脈疾患', en: 'Coronary artery disease', allowed: 'yes / no', unit: '' },
-  hasContraLateralLesion: {
-    ja: '対側動脈病変',
-    en: 'Contralateral arterial lesion',
-    allowed: 'yes / no',
-    unit: '',
-  },
-  hasOtherVD: { ja: 'その他血管病変', en: 'Other vascular lesion', allowed: 'yes / no', unit: '' },
-  rutherford: {
-    ja: 'ラザフォード分類',
-    en: 'Rutherford classification',
-    allowed: 'class4 / class5 / class6',
-    unit: '',
-  },
+const CHOICE_MESSAGE_KEYS: Partial<
+  Record<BatchField, readonly { value: string | boolean; key: MessageKey }[]>
+> = {
+  sex: [
+    { value: 'male', key: 'male' },
+    { value: 'female', key: 'female' },
+  ],
+  activity: [
+    { value: 'ambulatory', key: 'ambulatory' },
+    { value: 'wheelchair', key: 'wheelchair' },
+    { value: 'immobile', key: 'immobile' },
+  ],
+  ckd: [
+    { value: 'normal', key: 'normal' },
+    { value: 'g3', key: 'g3' },
+    { value: 'g4', key: 'g4' },
+    { value: 'g5', key: 'g5' },
+    { value: 'g5D', key: 'g5D' },
+  ],
+  malignant: [
+    { value: 'no', key: 'noMalignancy' },
+    { value: 'pastHistory', key: 'pastHistory' },
+    { value: 'underTreatment', key: 'underTreatment' },
+  ],
+  rutherford: [
+    { value: 'class4', key: 'class4' },
+    { value: 'class5', key: 'class5' },
+    { value: 'class6', key: 'class6' },
+  ],
 };
 
 const HEADER_FILL = 'FF2D6A7B';
 const INPUT_FILL = 'FFFFF4CC';
 const ERROR_FILL = 'FFFFE0E0';
+
+function fieldLabel(locale: BatchTemplateLocale, field: BatchField): string {
+  if (field === 'caseId') return MESSAGES[locale].caseId;
+  return MESSAGES[locale][QUESTION_LABEL_KEYS[field]];
+}
+
+function fieldChoices(
+  locale: BatchTemplateLocale,
+  field: BatchField,
+): readonly { value: string | boolean; label: string }[] {
+  const choices = CHOICE_MESSAGE_KEYS[field];
+  if (choices) {
+    return choices.map((choice) => ({
+      value: choice.value,
+      label: MESSAGES[locale][choice.key],
+    }));
+  }
+  if (BOOLEAN_FIELDS.has(field)) {
+    return [
+      { value: true, label: MESSAGES[locale].yes },
+      { value: false, label: MESSAGES[locale].no },
+    ];
+  }
+  return [];
+}
+
+function allowedValues(locale: BatchTemplateLocale, field: BatchField): string {
+  if (field === 'caseId') return TEMPLATE_TEXT[locale].freeText;
+  const choices = fieldChoices(locale, field);
+  if (choices.length) return choices.map((choice) => choice.label).join(' / ');
+  const numeric = NUMERIC_VALIDATION[field];
+  if (!numeric) return '';
+  const integer = numeric.type === 'whole' ? (locale === 'ja' ? '（整数）' : ' (integer)') : '';
+  return locale === 'ja'
+    ? `0より大きく${numeric.max}以下${integer}`
+    : `Greater than 0 and at most ${numeric.max}${integer}`;
+}
 
 function styleHeader(row: ExcelJS.Row): void {
   row.height = 30;
@@ -157,15 +195,16 @@ function styleHeader(row: ExcelJS.Row): void {
   });
 }
 
-function setColumnWidths(sheet: ExcelJS.Worksheet): void {
+function setColumnWidths(sheet: ExcelJS.Worksheet, locale: BatchTemplateLocale): void {
   sheet.columns.forEach((column, index) => {
     const field = BATCH_FIELDS[index];
-    column.width =
-      field === 'caseId' ? 16 : field && FIELD_GUIDE[field].allowed.length > 24 ? 22 : 16;
+    if (!field) return;
+    column.width = Math.min(38, Math.max(16, fieldLabel(locale, field).length + 4));
   });
 }
 
-function addInputValidation(sheet: ExcelJS.Worksheet): void {
+function addInputValidation(sheet: ExcelJS.Worksheet, locale: BatchTemplateLocale): void {
+  const text = TEMPLATE_TEXT[locale];
   BATCH_FIELDS.forEach((field, index) => {
     if (field === 'caseId') return;
     const column = index + 1;
@@ -174,15 +213,15 @@ function addInputValidation(sheet: ExcelJS.Worksheet): void {
     for (let row = rangeStart; row <= rangeEnd; row += 1) {
       const cell = sheet.getCell(row, column);
       cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: INPUT_FILL } };
-      const values = ENUM_VALUES[field] ?? (BOOLEAN_FIELDS.has(field) ? ['yes', 'no'] : null);
-      if (values) {
+      const values = fieldChoices(locale, field).map((choice) => choice.label);
+      if (values.length) {
         cell.dataValidation = {
           type: 'list',
           allowBlank: false,
           formulae: [`"${values.join(',')}"`],
           showErrorMessage: true,
-          errorTitle: 'Invalid value',
-          error: `Choose one of: ${values.join(', ')}`,
+          errorTitle: text.invalidValue,
+          error: `${text.chooseOne}: ${values.join(', ')}`,
         };
       } else {
         const numeric = NUMERIC_VALIDATION[field];
@@ -193,8 +232,8 @@ function addInputValidation(sheet: ExcelJS.Worksheet): void {
             allowBlank: false,
             formulae: [numeric.min, numeric.max],
             showErrorMessage: true,
-            errorTitle: 'Invalid number',
-            error: `Enter a value between ${numeric.min} and ${numeric.max}.`,
+            errorTitle: text.invalidNumber,
+            error: text.enterRange,
           };
         }
       }
@@ -202,36 +241,38 @@ function addInputValidation(sheet: ExcelJS.Worksheet): void {
   });
 }
 
-export async function createBatchTemplateWorkbook(): Promise<ExcelJS.Buffer> {
+export async function createBatchTemplateWorkbook(
+  locale: BatchTemplateLocale = 'en',
+): Promise<ExcelJS.Buffer> {
   const ExcelJSRuntime = await loadExcelJS();
   const workbook = new ExcelJSRuntime.Workbook();
   workbook.creator = 'CLiTICAL';
   workbook.created = new Date();
   workbook.calcProperties.fullCalcOnLoad = true;
 
-  const input = workbook.addWorksheet(DATA_SHEET, {
+  const text = TEMPLATE_TEXT[locale];
+  const input = workbook.addWorksheet(text.dataSheet, {
     views: [{ state: 'frozen', xSplit: 1, ySplit: 1 }],
     properties: { defaultRowHeight: 20 },
   });
-  input.addRow([...BATCH_FIELDS]);
+  input.addRow(BATCH_FIELDS.map((field) => fieldLabel(locale, field)));
   styleHeader(input.getRow(1));
   for (let index = 0; index < TEMPLATE_ROW_COUNT; index += 1) {
     input.addRow([formatCaseId(index)]);
   }
-  setColumnWidths(input);
-  addInputValidation(input);
+  setColumnWidths(input, locale);
+  addInputValidation(input, locale);
   input.autoFilter = { from: 'A1', to: input.getCell(1, BATCH_FIELDS.length).address };
 
-  const guide = workbook.addWorksheet(GUIDE_SHEET, {
+  const guide = workbook.addWorksheet(text.guideSheet, {
     views: [{ state: 'frozen', ySplit: 1 }],
   });
-  guide.addRow(['field', '日本語', 'English', '入力値 / Allowed values', '単位 / Unit']);
+  guide.addRow([...text.guideHeaders]);
   for (const field of BATCH_FIELDS) {
-    const item = FIELD_GUIDE[field];
-    guide.addRow([field, item.ja, item.en, item.allowed, item.unit]);
+    guide.addRow([field, fieldLabel(locale, field), allowedValues(locale, field)]);
   }
   styleHeader(guide.getRow(1));
-  guide.columns = [{ width: 28 }, { width: 34 }, { width: 34 }, { width: 42 }, { width: 16 }];
+  guide.columns = [{ width: 28 }, { width: 44 }, { width: 42 }];
   guide.eachRow((row, rowNumber) => {
     if (rowNumber > 1) row.alignment = { vertical: 'top', wrapText: true };
   });
@@ -263,25 +304,47 @@ function hasPatientData(row: RawBatchRow): boolean {
   });
 }
 
+function normalizeLocalizedValue(
+  locale: BatchTemplateLocale,
+  field: BatchField,
+  value: unknown,
+): unknown {
+  if (typeof value !== 'string') return value;
+  const normalized = value.trim().toLocaleLowerCase(locale);
+  const match = fieldChoices(locale, field).find(
+    (choice) => choice.label.trim().toLocaleLowerCase(locale) === normalized,
+  );
+  return match?.value ?? value;
+}
+
 export async function readBatchWorkbook(data: ExcelJS.Buffer): Promise<RawBatchRow[]> {
   const ExcelJSRuntime = await loadExcelJS();
   const workbook = new ExcelJSRuntime.Workbook();
   await workbook.xlsx.load(data);
-  const sheet = workbook.getWorksheet(DATA_SHEET);
-  if (!sheet) throw new Error(`Worksheet "${DATA_SHEET}" was not found.`);
+  const locale: BatchTemplateLocale | undefined = workbook.getWorksheet(TEMPLATE_TEXT.ja.dataSheet)
+    ? 'ja'
+    : workbook.getWorksheet(TEMPLATE_TEXT.en.dataSheet)
+      ? 'en'
+      : undefined;
+  if (!locale) throw new Error('The CLiTICAL data entry worksheet was not found.');
+  const sheet = workbook.getWorksheet(TEMPLATE_TEXT[locale].dataSheet)!;
 
   const headers = BATCH_FIELDS.map((_, index) =>
     String(sheet.getCell(1, index + 1).value ?? '').trim(),
   );
-  if (headers.some((header, index) => header !== BATCH_FIELDS[index])) {
-    throw new Error('The Data Entry headers do not match the CLiTICAL template.');
+  if (headers.some((header, index) => header !== fieldLabel(locale, BATCH_FIELDS[index]))) {
+    throw new Error('The worksheet headers do not match the CLiTICAL template.');
   }
 
   const rows: RawBatchRow[] = [];
   for (let rowNumber = 2; rowNumber <= sheet.rowCount; rowNumber += 1) {
     const row: RawBatchRow = {};
     BATCH_FIELDS.forEach((field, index) => {
-      row[field] = cellValue(sheet.getCell(rowNumber, index + 1).value);
+      row[field] = normalizeLocalizedValue(
+        locale,
+        field,
+        cellValue(sheet.getCell(rowNumber, index + 1).value),
+      );
     });
     if (hasPatientData(row)) rows.push(row);
   }

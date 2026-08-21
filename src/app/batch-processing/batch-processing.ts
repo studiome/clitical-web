@@ -8,6 +8,7 @@ import {
   createBatchResultWorkbook,
   createBatchTemplateWorkbook,
   readBatchWorkbook,
+  BatchTemplateLocale,
 } from './batch-workbook';
 
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -32,11 +33,11 @@ export class BatchProcessing {
     () => this.results().filter((result) => !result.ok).length,
   );
 
-  protected async downloadTemplate(): Promise<void> {
+  protected async downloadTemplate(locale: BatchTemplateLocale): Promise<void> {
     await this.runBusy(async () => {
       try {
-        const bytes = await createBatchTemplateWorkbook();
-        this.download(bytes, 'clitical-batch-template.xlsx');
+        const bytes = await createBatchTemplateWorkbook(locale);
+        this.download(bytes, `clitical-batch-template-${locale}.xlsx`);
       } catch {
         this.message.set(this.t().workbookWriteError);
       }

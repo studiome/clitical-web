@@ -85,9 +85,9 @@ const EN = {
   batchProcessingTitle: 'Batch Processing',
   batchIntro:
     'Download the Excel template, enter one patient per row, upload it, and calculate all rows at once.',
-  batchPrivacy:
-    'The workbook is processed only in this browser. Do not enter names, medical record numbers, or other direct identifiers.',
-  downloadTemplate: 'Download Excel Template',
+  batchPrivacy: 'The workbook is processed only in this browser.',
+  downloadJapaneseTemplate: 'Japanese Template',
+  downloadEnglishTemplate: 'English Template',
   selectExcelFile: 'Select Excel File',
   calculateBatch: 'Start Calculation',
   downloadBatchResults: 'Download Results',
@@ -126,8 +126,7 @@ const EN = {
   predicted2yrOS: 'Predicted 2-year OS',
   predicted2yrOSDescription: 'Predicted 2 year Overall Survival post-revascularisation',
   predicted2yrAFS: 'Predicted 2-year AFS',
-  predicted2yrAFSDescription:
-    'Predicted 2 year Amputation Free Survival post-revascularisation',
+  predicted2yrAFSDescription: 'Predicted 2 year Amputation Free Survival post-revascularisation',
   gnriNoRisk: 'No Risk',
   gnriLowRisk: 'Low Risk',
   gnriModerateRisk: 'Moderate Risk',
@@ -167,8 +166,7 @@ const JA: Messages = {
   questionAlbSubtitle: 'アルブミン値 [g/dl]を入力してください。',
   questionActivityTitle: 'ADL',
   questionCHFTitle: 'うっ血性心不全',
-  questionCHFSubtitle:
-    'ありには、心不全入院歴あり・有症状の場合及びエコーでの心機能低下を含む。',
+  questionCHFSubtitle: 'ありには、心不全入院歴あり・有症状の場合及びエコーでの心機能低下を含む。',
   questionCADTitle: '冠動脈疾患',
   questionCADSubtitle: 'ありには、心筋梗塞、狭心症の既往・PCI歴あり・CABG歴ありを含む。',
   questionCVDTitle: '脳血管障害',
@@ -230,9 +228,9 @@ const JA: Messages = {
   batchProcessingTitle: '一括処理',
   batchIntro:
     'Excelテンプレートをダウンロードし、1行に1症例を入力してアップロードすると、全症例を一括計算できます。',
-  batchPrivacy:
-    'Excelはこのブラウザ内だけで処理されます。氏名、カルテ番号など個人を直接特定できる情報は入力しないでください。',
-  downloadTemplate: 'Excelテンプレートをダウンロード',
+  batchPrivacy: 'Excelはこのブラウザ内だけで処理されます。',
+  downloadJapaneseTemplate: '日本語版テンプレート',
+  downloadEnglishTemplate: '英語版テンプレート',
   selectExcelFile: 'Excelファイルを選択',
   calculateBatch: '計算開始',
   downloadBatchResults: '計算結果をダウンロード',

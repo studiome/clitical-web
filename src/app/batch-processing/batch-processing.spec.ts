@@ -25,13 +25,14 @@ describe('BatchProcessing', () => {
     const host = fixture.nativeElement as HTMLElement;
 
     expect(host.querySelector('h1')?.textContent).toContain('Batch Processing');
-    expect(host.querySelector('[data-action="download-template"]')).toBeTruthy();
+    expect(host.querySelector('[data-action="download-template-ja"]')).toBeTruthy();
+    expect(host.querySelector('[data-action="download-template-en"]')).toBeTruthy();
     expect(host.querySelector('input[type="file"]')?.getAttribute('accept')).toContain('.xlsx');
     expect(host.querySelector<HTMLButtonElement>('[data-action="calculate"]')?.disabled).toBe(true);
   });
 
   it('loads a populated template and displays the calculated result', async () => {
-    const bytes = await createBatchTemplateWorkbook();
+    const bytes = await createBatchTemplateWorkbook('en');
     const template = new File([bytes as unknown as BlobPart], 'patients.xlsx');
     const fixture = TestBed.createComponent(BatchProcessing);
     await fixture.whenStable();
@@ -46,18 +47,18 @@ describe('BatchProcessing', () => {
     });
   });
 
-  it('downloads the generated template without sending data to a server', async () => {
+  it('downloads the Japanese and English templates without sending data to a server', async () => {
     const createObjectURL = vi.fn(() => 'blob:test');
     const revokeObjectURL = vi.fn();
     vi.stubGlobal('URL', { createObjectURL, revokeObjectURL });
     const fixture = TestBed.createComponent(BatchProcessing);
     await fixture.whenStable();
 
-    const button = fixture.nativeElement.querySelector(
-      '[data-action="download-template"]',
-    ) as HTMLButtonElement;
-    button.click();
-    await vi.waitFor(() => expect(createObjectURL).toHaveBeenCalledOnce());
+    const host = fixture.nativeElement as HTMLElement;
+    (host.querySelector('[data-action="download-template-ja"]') as HTMLButtonElement).click();
+    await vi.waitFor(() => expect(createObjectURL).toHaveBeenCalledTimes(1));
+    (host.querySelector('[data-action="download-template-en"]') as HTMLButtonElement).click();
+    await vi.waitFor(() => expect(createObjectURL).toHaveBeenCalledTimes(2));
     vi.unstubAllGlobals();
   });
 });

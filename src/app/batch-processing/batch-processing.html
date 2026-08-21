@@ -11,15 +11,26 @@
 
   <div class="step">
     <span class="step-number" aria-hidden="true">1</span>
-    <button
-      matButton="outlined"
-      data-action="download-template"
-      [disabled]="isBusy()"
-      (click)="downloadTemplate()"
-    >
-      <mat-icon aria-hidden="true">download</mat-icon>
-      {{ t().downloadTemplate }}
-    </button>
+    <div class="template-buttons">
+      <button
+        matButton="outlined"
+        data-action="download-template-ja"
+        [disabled]="isBusy()"
+        (click)="downloadTemplate('ja')"
+      >
+        <mat-icon aria-hidden="true">download</mat-icon>
+        {{ t().downloadJapaneseTemplate }}
+      </button>
+      <button
+        matButton="outlined"
+        data-action="download-template-en"
+        [disabled]="isBusy()"
+        (click)="downloadTemplate('en')"
+      >
+        <mat-icon aria-hidden="true">download</mat-icon>
+        {{ t().downloadEnglishTemplate }}
+      </button>
+    </div>
   </div>
 
   <div class="step">
