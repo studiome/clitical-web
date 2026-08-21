@@ -24,7 +24,24 @@ describe('batch workbook', () => {
     expect(input?.getCell('D1').value).toBe('身長 [cm]');
     expect(input?.getCell('A2').value).toBe('CASE-0001');
     expect(input?.getCell('A101').value).toBe('CASE-0100');
-    expect(workbook.getWorksheet('入力ガイド')).toBeTruthy();
+    const guide = workbook.getWorksheet('設問説明');
+    expect(guide).toBeTruthy();
+    expect(workbook.worksheets.map((sheet) => sheet.name).slice(0, 2)).toEqual([
+      '症例入力',
+      '設問説明',
+    ]);
+    expect(guide?.getRow(1).values).toEqual([
+      undefined,
+      'フィールドコード',
+      '設問名',
+      '説明',
+      '入力可能な値',
+    ]);
+    expect(guide?.getCell('B10').value).toBe('脳血管障害');
+    expect(String(guide?.getCell('C10').value)).toContain('脳梗塞');
+    expect(guide?.views[0]).toMatchObject({ state: 'frozen', ySplit: 1 });
+    expect(guide?.getCell('C10').alignment).toMatchObject({ wrapText: true });
+    expect(guide?.autoFilter).toBeTruthy();
     expect(input?.views[0]).toMatchObject({ state: 'frozen', ySplit: 1, xSplit: 1 });
     expect(input?.getCell('B2').dataValidation).toMatchObject({
       type: 'list',
@@ -50,7 +67,25 @@ describe('batch workbook', () => {
       type: 'list',
       formulae: ['"Male,Female"'],
     });
-    expect(workbook.getWorksheet('Input Guide')).toBeTruthy();
+    const guide = workbook.getWorksheet('Question Guide');
+    expect(guide).toBeTruthy();
+    expect(workbook.worksheets.map((sheet) => sheet.name).slice(0, 2)).toEqual([
+      'Data Entry',
+      'Question Guide',
+    ]);
+    expect(guide?.getRow(1).values).toEqual([
+      undefined,
+      'Field code',
+      'Question name',
+      'Full name',
+      'Description',
+      'Allowed values',
+    ]);
+    expect(guide?.getCell('C8').value).toBe('Activities of Daily Living (ADL)');
+    expect(String(guide?.getCell('C11').value)).toContain('Estimated Glomerular Filtration Rate');
+    expect(guide?.getCell('C18').value).toBe('White Blood Cell Count (WBC)');
+    expect(guide?.getCell('C20').value).toBe('Low-Density Lipoprotein Cholesterol (LDL-C)');
+    expect(String(guide?.getCell('D11').value)).toContain('estimated glomerular filtration rate');
   });
 
   it('reads only populated data rows and preserves their case IDs', async () => {

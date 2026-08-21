@@ -57,6 +57,8 @@ describe('BatchProcessing', () => {
     const host = fixture.nativeElement as HTMLElement;
     (host.querySelector('[data-action="download-template-ja"]') as HTMLButtonElement).click();
     await vi.waitFor(() => expect(createObjectURL).toHaveBeenCalledTimes(1));
+    await fixture.whenStable();
+    fixture.detectChanges();
     (host.querySelector('[data-action="download-template-en"]') as HTMLButtonElement).click();
     await vi.waitFor(() => expect(createObjectURL).toHaveBeenCalledTimes(2));
     vi.unstubAllGlobals();

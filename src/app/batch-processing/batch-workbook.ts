@@ -13,9 +13,11 @@ export type BatchTemplateLocale = AppLocale;
 const TEMPLATE_TEXT = {
   en: {
     dataSheet: 'Data Entry',
-    guideSheet: 'Input Guide',
-    guideHeaders: ['Field code', 'Question name', 'Allowed values'],
+    guideSheet: 'Question Guide',
+    guideHeaders: ['Field code', 'Question name', 'Full name', 'Description', 'Allowed values'],
     freeText: 'Any text',
+    caseIdDescription: 'Temporary ID used to match each input row with its calculation result.',
+    noDescription: '—',
     invalidValue: 'Invalid value',
     chooseOne: 'Choose one of',
     invalidNumber: 'Invalid number',
@@ -23,9 +25,11 @@ const TEMPLATE_TEXT = {
   },
   ja: {
     dataSheet: '症例入力',
-    guideSheet: '入力ガイド',
-    guideHeaders: ['フィールドコード', '設問名', '入力可能な値'],
+    guideSheet: '設問説明',
+    guideHeaders: ['フィールドコード', '設問名', '説明', '入力可能な値'],
     freeText: '任意の文字列',
+    caseIdDescription: '入力行と計算結果を対応付けるための仮IDです。',
+    noDescription: '—',
     invalidValue: '入力値が不正です',
     chooseOne: '次から選択してください',
     invalidNumber: '数値が不正です',
@@ -57,6 +61,37 @@ const QUESTION_LABEL_KEYS: Record<Exclude<BatchField, 'caseId'>, MessageKey> = {
   hasContraLateralLesion: 'questionContraTitle',
   hasOtherVD: 'questionOtherLesionTitle',
   rutherford: 'questionRutherfordTitle',
+};
+
+const QUESTION_DESCRIPTION_KEYS: Partial<Record<Exclude<BatchField, 'caseId'>, MessageKey>> = {
+  sex: 'questionSexSubtitle',
+  age: 'questionAgeSubtitle',
+  heightCm: 'questionHeightSubtitle',
+  weight: 'questionWeightSubtitle',
+  alb: 'questionAlbSubtitle',
+  hasCHF: 'questionCHFSubtitle',
+  hasCVD: 'questionCVDSubtitle',
+  ckd: 'questionCKDSubtitle',
+  hasAILesion: 'questionAILesionSubtitle',
+  hasFPLesion: 'questionFPLesionSubtitle',
+  hasBKLesion: 'questionBKLesionSubtitle',
+  isUrgent: 'questionUrgentSubtitle',
+  hasFever: 'questionFeverSubtitle',
+  hasAbnormalWBC: 'questionAbnormalWBCSubtitle',
+  hasLocalInfection: 'questionLocalInfectionSubtitle',
+  hasDyslipidemia: 'questionDLSubtitle',
+  isSmoking: 'questionSmokingSubtitle',
+  hasCAD: 'questionCADSubtitle',
+  hasContraLateralLesion: 'questionContraSubtitle',
+  hasOtherVD: 'questionOtherLesionSubtitle',
+};
+
+const ENGLISH_FULL_NAMES: Partial<Record<BatchField, string>> = {
+  alb: 'Serum Albumin (Alb)',
+  activity: 'Activities of Daily Living (ADL)',
+  ckd: 'Chronic Kidney Disease (CKD); Estimated Glomerular Filtration Rate (eGFR)',
+  hasAbnormalWBC: 'White Blood Cell Count (WBC)',
+  hasDyslipidemia: 'Low-Density Lipoprotein Cholesterol (LDL-C)',
 };
 
 type ExcelJSRuntime = typeof ExcelJS;
@@ -152,6 +187,14 @@ const ERROR_FILL = 'FFFFE0E0';
 function fieldLabel(locale: BatchTemplateLocale, field: BatchField): string {
   if (field === 'caseId') return MESSAGES[locale].caseId;
   return MESSAGES[locale][QUESTION_LABEL_KEYS[field]];
+}
+
+function fieldDescription(locale: BatchTemplateLocale, field: BatchField): string {
+  const text = TEMPLATE_TEXT[locale];
+  if (field === 'caseId') return text.caseIdDescription;
+  const key = QUESTION_DESCRIPTION_KEYS[field];
+  const description = key ? MESSAGES[locale][key].trim() : '';
+  return description || text.noDescription;
 }
 
 function fieldChoices(
@@ -266,16 +309,46 @@ export async function createBatchTemplateWorkbook(
 
   const guide = workbook.addWorksheet(text.guideSheet, {
     views: [{ state: 'frozen', ySplit: 1 }],
+    properties: { defaultRowHeight: 36, tabColor: { argb: 'FF5B8C85' } },
   });
   guide.addRow([...text.guideHeaders]);
   for (const field of BATCH_FIELDS) {
-    guide.addRow([field, fieldLabel(locale, field), allowedValues(locale, field)]);
+    guide.addRow(
+      locale === 'en'
+        ? [
+            field,
+            fieldLabel(locale, field),
+            ENGLISH_FULL_NAMES[field] ?? text.noDescription,
+            fieldDescription(locale, field),
+            allowedValues(locale, field),
+          ]
+        : [
+            field,
+            fieldLabel(locale, field),
+            fieldDescription(locale, field),
+            allowedValues(locale, field),
+          ],
+    );
   }
   styleHeader(guide.getRow(1));
-  guide.columns = [{ width: 28 }, { width: 44 }, { width: 42 }];
+  guide.columns =
+    locale === 'en'
+      ? [{ width: 28 }, { width: 44 }, { width: 52 }, { width: 76 }, { width: 42 }]
+      : [{ width: 28 }, { width: 44 }, { width: 76 }, { width: 42 }];
   guide.eachRow((row, rowNumber) => {
-    if (rowNumber > 1) row.alignment = { vertical: 'top', wrapText: true };
+    if (rowNumber <= 1) return;
+    row.height = 60;
+    row.alignment = { vertical: 'top', wrapText: true };
+    row.eachCell((cell) => {
+      cell.border = {
+        bottom: { style: 'thin', color: { argb: 'FFD5DDDA' } },
+      };
+      if (rowNumber % 2 === 1) {
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF3F7F5' } };
+      }
+    });
   });
+  guide.autoFilter = { from: 'A1', to: guide.getCell(1, text.guideHeaders.length).address };
 
   return workbook.xlsx.writeBuffer();
 }

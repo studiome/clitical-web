@@ -17,7 +17,17 @@ CLiTICALの「一括処理」画面では、複数症例を記載したExcelフ�
 日本語版と英語版の2種類があり、どちらも次の2シートで構成されます。
 
 - `症例入力` / `Data Entry`: 症例入力用。1行目はWebアプリと同じ設問名です。
-- `入力ガイド` / `Input Guide`: 内部フィールドコード、設問名、入力可能な値を記載しています。
+- `設問説明` / `Question Guide`: 入力シートのすぐ隣に配置され、内部フィールドコード、設問名、Webアプリと同じ説明、入力可能な値を表形式で記載しています。
+
+英語版の`Question Guide`には`Full name`列もあり、略語を含む項目について正式名称を確認できます。対象には次の名称が含まれます。
+
+- Activities of Daily Living (ADL)
+- Serum Albumin (Alb)
+- Chronic Kidney Disease (CKD) / Estimated Glomerular Filtration Rate (eGFR)
+- White Blood Cell Count (WBC)
+- Low-Density Lipoprotein Cholesterol (LDL-C)
+
+説明シートは先頭行を固定し、オートフィルター、折り返し表示、交互の行背景色を設定しています。
 
 症例入力シートの1列目には、`CASE-0001`から`CASE-0100`までの仮症例IDがあらかじめ連番で入力されています。これは画面と出力Excelで同じ症例を対応付けるためのIDです。
 
