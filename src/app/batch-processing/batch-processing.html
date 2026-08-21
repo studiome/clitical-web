@@ -1,0 +1,116 @@
+<h1 class="page-title">{{ t().batchProcessingTitle }}</h1>
+
+<p class="intro">{{ t().batchIntro }}</p>
+<aside class="privacy-note">
+  <mat-icon aria-hidden="true">privacy_tip</mat-icon>
+  <span>{{ t().batchPrivacy }}</span>
+</aside>
+
+<section class="workflow" aria-labelledby="batch-workflow-title">
+  <h2 id="batch-workflow-title" class="section-title">Excel</h2>
+
+  <div class="step">
+    <span class="step-number" aria-hidden="true">1</span>
+    <button
+      matButton="outlined"
+      data-action="download-template"
+      [disabled]="isBusy()"
+      (click)="downloadTemplate()"
+    >
+      <mat-icon aria-hidden="true">download</mat-icon>
+      {{ t().downloadTemplate }}
+    </button>
+  </div>
+
+  <div class="step">
+    <span class="step-number" aria-hidden="true">2</span>
+    <div class="file-control">
+      <label for="batch-file">{{ t().selectExcelFile }}</label>
+      <input
+        id="batch-file"
+        type="file"
+        accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        [disabled]="isBusy()"
+        (change)="selectFile($event)"
+      />
+    </div>
+  </div>
+
+  <div class="step">
+    <span class="step-number" aria-hidden="true">3</span>
+    <button
+      matButton="filled"
+      data-action="calculate"
+      [disabled]="!rows().length || isBusy()"
+      (click)="calculate()"
+    >
+      <mat-icon aria-hidden="true">calculate</mat-icon>
+      {{ t().calculateBatch }}
+    </button>
+  </div>
+</section>
+
+<p class="status-message" role="status" aria-live="polite">
+  @if (isBusy()) {
+    {{ t().batchProcessingInProgress }}
+  } @else {
+    {{ message() }}
+  }
+</p>
+
+@if (results().length) {
+  <section class="results" aria-labelledby="batch-results-title">
+    <div class="results-heading">
+      <div>
+        <h2 id="batch-results-title" class="section-title">{{ t().batchSummary }}</h2>
+        <p>
+          {{ t().batchSuccess }}: {{ successCount() }} / {{ t().batchError }}:
+          {{ errorCount() }}
+        </p>
+      </div>
+      <button matButton="outlined" [disabled]="isBusy()" (click)="downloadResults()">
+        <mat-icon aria-hidden="true">download</mat-icon>
+        {{ t().downloadBatchResults }}
+      </button>
+    </div>
+
+    <div class="table-scroll" tabindex="0">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">{{ t().caseId }}</th>
+            <th scope="col">{{ t().status }}</th>
+            <th scope="col">{{ t().validationErrors }}</th>
+            <th scope="col">{{ t().gnri }}</th>
+            <th scope="col">{{ t().predicted2yrOS }}</th>
+            <th scope="col">{{ t().predicted2yrAFS }}</th>
+            <th scope="col">{{ t().predicted30DAD }}</th>
+            <th scope="col">{{ t().predicted30DMALE }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (result of results(); track result.caseId + $index) {
+            <tr [class.error-row]="!result.ok">
+              <th scope="row">{{ result.caseId }}</th>
+              <td>{{ result.ok ? t().batchSuccess : t().batchError }}</td>
+              <td>{{ errors(result) }}</td>
+              @if (result.ok) {
+                <td>{{ fixed(result.risk.gnri) }}</td>
+                <td>{{ percent(result.risk.predictedOS) }}</td>
+                <td>{{ percent(result.risk.predictedAFS) }}</td>
+                <td>{{ percent(result.risk.predicted30DDeathOrAmputation) }}</td>
+                <td>{{ percent(result.risk.predicted30DMALE) }}</td>
+              } @else {
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+}

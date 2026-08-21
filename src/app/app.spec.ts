@@ -23,11 +23,12 @@ describe('App', () => {
     expect(compiled.querySelector('mat-toolbar')?.textContent).toContain('CLiTICAL');
   });
 
-  it('shows the three navigation destinations', async () => {
+  it('shows the four navigation destinations', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const nav: HTMLElement = fixture.nativeElement.querySelector('nav');
     expect(nav.textContent).toContain('Risk Assessment');
+    expect(nav.textContent).toContain('Batch');
     expect(nav.textContent).toContain('References');
     expect(nav.textContent).toContain('Settings');
   });
@@ -60,6 +61,18 @@ describe('App', () => {
 
     const current = fixture.nativeElement.querySelector('nav a[aria-current="page"]');
     expect(current?.textContent).toContain('References');
+  });
+
+  it('navigates to Batch Processing and marks it active', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    await TestBed.inject(Router).navigateByUrl('/batch');
+    await fixture.whenStable();
+
+    const text = (fixture.nativeElement as HTMLElement).textContent!;
+    expect(text).toContain('Download the Excel template');
+    const current = fixture.nativeElement.querySelector('nav a[aria-current="page"]');
+    expect(current?.textContent).toContain('Batch');
   });
 
   it('navigates to the Settings destination and marks it active', async () => {
@@ -123,6 +136,10 @@ describe('App', () => {
     await fixture.whenStable();
     const titleService = TestBed.inject(Title);
     expect(titleService.getTitle()).toBe('Patient Data | CLiTICAL');
+
+    await TestBed.inject(Router).navigateByUrl('/batch');
+    await fixture.whenStable();
+    expect(titleService.getTitle()).toBe('Batch Processing | CLiTICAL');
 
     await TestBed.inject(Router).navigateByUrl('/references');
     await fixture.whenStable();

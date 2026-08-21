@@ -12,9 +12,7 @@ export interface NavDestination {
 /**
  * Material 3 adaptive navigation: a bottom navigation bar on compact widths
  * (< 600px) and a navigation rail on medium/expanded widths (>= 600px). The
- * same destinations render in both; only the layout changes, via CSS. Matches
- * the three destinations of the sibling iOS/Android apps (Risk / References /
- * Settings).
+ * same destinations render in both; only the layout changes, via CSS.
  */
 @Component({
   selector: 'app-navigation',

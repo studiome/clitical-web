@@ -10,6 +10,11 @@ export const routes: Routes = [
     loadComponent: () => import('./risk-view/risk-view').then((m) => m.RiskView),
   },
   {
+    path: 'batch',
+    loadComponent: () =>
+      import('./batch-processing/batch-processing').then((m) => m.BatchProcessing),
+  },
+  {
     path: 'references',
     loadComponent: () => import('./references/references').then((m) => m.References),
   },

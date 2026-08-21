@@ -1,0 +1,144 @@
+:host {
+  display: block;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.page-title {
+  font: var(--mat-sys-headline-medium);
+  margin: 0 0 12px;
+}
+
+.intro {
+  max-width: 760px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.privacy-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 760px;
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.privacy-note mat-icon {
+  flex: none;
+  color: var(--mat-sys-primary);
+}
+
+.workflow,
+.results {
+  margin-top: 24px;
+}
+
+.section-title {
+  font: var(--mat-sys-title-large);
+  margin: 0;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font: var(--mat-sys-label-large);
+}
+
+.file-control {
+  display: grid;
+  gap: 8px;
+}
+
+.file-control label {
+  font: var(--mat-sys-label-large);
+}
+
+.file-control input {
+  max-width: 100%;
+  color: var(--mat-sys-on-surface);
+}
+
+.status-message,
+.results-heading p {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.status-message {
+  min-height: 24px;
+}
+
+.results-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.results-heading p {
+  margin: 8px 0 0;
+}
+
+.table-scroll {
+  margin-top: 16px;
+  overflow-x: auto;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 12px;
+}
+
+.table-scroll:focus-visible {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  white-space: nowrap;
+}
+
+thead {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.error-row {
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+tbody tr:last-child th,
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+@media (max-width: 599px) {
+  .results-heading {
+    display: grid;
+  }
+}

@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { App } from './app';
 import { routes } from './app.routes';
+import { BatchProcessing } from './batch-processing/batch-processing';
 import { QuestionForm } from './question-form/question-form';
 import { References } from './references/references';
 import { RiskView } from './risk-view/risk-view';
@@ -48,6 +49,12 @@ describe('accessibility (axe)', () => {
     await expectNoViolations(fixture.nativeElement);
   });
 
+  it('batch processing page has no axe violations', async () => {
+    const fixture = TestBed.createComponent(BatchProcessing);
+    await fixture.whenStable();
+    await expectNoViolations(fixture.nativeElement);
+  });
+
   it('references page has no axe violations', async () => {
     const fixture = TestBed.createComponent(References);
     await fixture.whenStable();
@@ -76,4 +83,3 @@ describe('accessibility (axe)', () => {
     await expectNoViolations(document.body);
   });
 });
-
