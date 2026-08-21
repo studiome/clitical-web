@@ -140,6 +140,7 @@ const EN = {
   notAvailable: 'N/A',
   skipToContent: 'Skip to main content',
   numberFieldRequiredError: 'This value is required.',
+  numberFieldRangeError: 'Enter a value in the permitted range.',
 };
 
 export type Messages = typeof EN;
@@ -283,6 +284,7 @@ const JA: Messages = {
   notAvailable: 'N/A',
   skipToContent: '本文へスキップ',
   numberFieldRequiredError: '入力してください。',
+  numberFieldRangeError: '入力可能な範囲の数値を入力してください。',
 };
 
 export const MESSAGES: Record<AppLocale, Messages> = { en: EN, ja: JA };

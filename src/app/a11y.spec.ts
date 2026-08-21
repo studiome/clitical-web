@@ -2,11 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import axe from 'axe-core';
-import { beforeEach, describe, expect, it } from 'vitest';
+import ExcelJS from 'exceljs';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from './app';
 import { routes } from './app.routes';
 import { BatchProcessing } from './batch-processing/batch-processing';
+import { createBatchTemplateWorkbook } from './batch-processing/batch-workbook';
 import { QuestionForm } from './question-form/question-form';
 import { References } from './references/references';
 import { RiskView } from './risk-view/risk-view';
@@ -28,6 +30,10 @@ async function expectNoViolations(element: HTMLElement): Promise<void> {
 }
 
 describe('accessibility (axe)', () => {
+  beforeAll(() => {
+    Object.assign(globalThis, { ExcelJS });
+  });
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideNoopAnimations(), provideRouter(routes)],
@@ -52,6 +58,61 @@ describe('accessibility (axe)', () => {
   it('batch processing page has no axe violations', async () => {
     const fixture = TestBed.createComponent(BatchProcessing);
     await fixture.whenStable();
+    await expectNoViolations(fixture.nativeElement);
+  });
+
+  // The empty-state render above never exercises the results table or its
+  // tabindex="0" scroll container, so drive a populated result through too.
+  it('batch processing page has no axe violations with results present', async () => {
+    const template = await createBatchTemplateWorkbook('en');
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(template);
+    const sheet = workbook.getWorksheet('Data Entry')!;
+    const values = [
+      'Female',
+      65,
+      150,
+      50,
+      4,
+      'Ambulatory',
+      'No',
+      'No',
+      'No',
+      'No',
+      'Yes',
+      'No',
+      'No',
+      'No',
+      'No',
+      'No',
+      'No',
+      'No',
+      'No',
+      'No',
+      'No',
+      'No',
+      'Class 4',
+    ];
+    values.forEach((value, index) => {
+      sheet.getRow(2).getCell(index + 2).value = value;
+    });
+    const bytes = await workbook.xlsx.writeBuffer();
+    const file = new File([bytes as unknown as BlobPart], 'patients.xlsx');
+
+    const fixture = TestBed.createComponent(BatchProcessing);
+    await fixture.whenStable();
+    const input = fixture.nativeElement.querySelector('input[type="file"]') as HTMLInputElement;
+    Object.defineProperty(input, 'files', { value: [file] });
+    input.dispatchEvent(new Event('change'));
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect((fixture.nativeElement as HTMLElement).textContent).toContain('patient rows loaded');
+    });
+
+    (fixture.nativeElement.querySelector('[data-action="calculate"]') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
     await expectNoViolations(fixture.nativeElement);
   });
 

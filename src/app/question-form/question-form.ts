@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { FieldTree, form, required, FormField } from '@angular/forms/signals';
+import { FieldTree, form, max, min, required, validate, FormField } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -44,6 +44,27 @@ interface Section {
   rows: Row[];
 }
 
+// Bounds intentionally mirror parseNumber in batch-calculation.ts (value > 0
+// and value <= max, plus integer for age) so the single-patient and batch
+// paths agree on what counts as a valid value.
+const NUMBER_FIELD_BOUNDS: Record<NumericField, { max: number; integer?: boolean }> = {
+  age: { max: 150, integer: true },
+  heightCm: { max: 300 },
+  weight: { max: 1000 },
+  alb: { max: 20 },
+};
+
+const NUMERIC_FIELD_KEYS = Object.keys(NUMBER_FIELD_BOUNDS) as NumericField[];
+
+function rangeError(value: number | null, key: NumericField) {
+  if (value === null) return undefined; // required() already covers this case
+  const bounds = NUMBER_FIELD_BOUNDS[key];
+  if (value <= 0 || value > bounds.max || (bounds.integer && !Number.isInteger(value))) {
+    return { kind: 'range' };
+  }
+  return undefined;
+}
+
 @Component({
   selector: 'app-question-form',
   imports: [
@@ -69,6 +90,17 @@ export class QuestionForm {
     required(path.heightCm);
     required(path.weight);
     required(path.alb);
+    // min/max only drive the native input's min/max attributes (FormField
+    // reflects them automatically); they can't express the exclusive lower
+    // bound, so the actual "> 0" rejection lives in the validate() calls below.
+    for (const key of NUMERIC_FIELD_KEYS) {
+      min(path[key], 0);
+      max(path[key], NUMBER_FIELD_BOUNDS[key].max);
+    }
+    validate(path.age, ({ value }) => rangeError(value(), 'age'));
+    validate(path.heightCm, ({ value }) => rangeError(value(), 'heightCm'));
+    validate(path.weight, ({ value }) => rangeError(value(), 'weight'));
+    validate(path.alb, ({ value }) => rangeError(value(), 'alb'));
   });
 
   // Same sections and row order as the iOS and Android apps.
@@ -305,22 +337,40 @@ export class QuestionForm {
     return state.touched() && state.invalid();
   }
 
+  protected numberFieldError(key: NumericField): string {
+    const state = this.numberForm[key]();
+    return state.getError('range')
+      ? this.t().numberFieldRangeError
+      : this.t().numberFieldRequiredError;
+  }
+
   protected reset(): void {
     this.store.reset();
+    this.numberForm().reset();
   }
 
   protected async analyze(): Promise<void> {
+    // Touch the root so its invalid state becomes visible on every numeric
+    // field (aria-invalid + mat-error), not just reported via the snackbar.
+    this.numberForm().markAsTouched();
+    if (this.numberForm().invalid()) {
+      const t = this.t();
+      const hasRangeError = NUMERIC_FIELD_KEYS.some((key) =>
+        this.numberForm[key]().getError('range'),
+      );
+      this.snackBar.open(
+        hasRangeError ? t.numberFieldRangeError : t.analysisNullErrorMessage,
+        t.ok,
+        { duration: 5000 },
+      );
+      return;
+    }
+
     const result = this.store.analyze();
     if (result.ok) {
       await this.router.navigateByUrl('/result');
       return;
     }
-    // Touch the numeric fields so their invalid state becomes visible
-    // (aria-invalid + mat-error), not just reported via the snackbar.
-    this.numberForm.age().markAsTouched();
-    this.numberForm.heightCm().markAsTouched();
-    this.numberForm.weight().markAsTouched();
-    this.numberForm.alb().markAsTouched();
 
     const t = this.t();
     const message =

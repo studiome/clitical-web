@@ -61,6 +61,10 @@ export class BatchProcessing {
         );
       } catch {
         this.message.set(this.t().workbookReadError);
+      } finally {
+        // Clear the input so re-selecting the same filename (e.g. after
+        // fixing the file and picking it again) still fires `change`.
+        input.value = '';
       }
     });
   }

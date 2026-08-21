@@ -31,11 +31,7 @@
             @case ('number') {
               <div class="row number-row" [attr.data-question]="row.key">
                 <label class="row-label" [for]="row.inputId">{{ row.label }}</label>
-                <mat-form-field
-                  appearance="outline"
-                  class="row-control"
-                  subscriptSizing="dynamic"
-                >
+                <mat-form-field appearance="outline" class="row-control" subscriptSizing="dynamic">
                   <input
                     matInput
                     [id]="row.inputId"
@@ -45,7 +41,7 @@
                     [formField]="numberField(row.key)"
                   />
                   @if (numberFieldInvalid(row.key)) {
-                    <mat-error>{{ t().numberFieldRequiredError }}</mat-error>
+                    <mat-error>{{ numberFieldError(row.key) }}</mat-error>
                   }
                 </mat-form-field>
               </div>

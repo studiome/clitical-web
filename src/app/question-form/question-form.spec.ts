@@ -36,6 +36,12 @@ describe('QuestionForm', () => {
     return (fixture.nativeElement as HTMLElement).textContent!;
   }
 
+  function setInputValue(id: string, value: string): void {
+    const input: HTMLInputElement = fixture.nativeElement.querySelector(`#${id}`);
+    input.value = value;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
   it('renders the same grouped sections as the iOS/Android apps', () => {
     for (const expected of [
       'Basic Info',
@@ -106,8 +112,8 @@ describe('QuestionForm', () => {
     );
     sexSelect.click();
     await fixture.whenStable();
-    const male = [...document.querySelectorAll<HTMLElement>('mat-option')].find(
-      (option) => option.textContent?.includes('Male'),
+    const male = [...document.querySelectorAll<HTMLElement>('mat-option')].find((option) =>
+      option.textContent?.includes('Male'),
     );
     expect(male).toBeTruthy();
     male!.click();
@@ -125,19 +131,15 @@ describe('QuestionForm', () => {
   });
 
   it('shows an error snackbar when numeric data is missing', async () => {
-    const button: HTMLButtonElement =
-      fixture.nativeElement.querySelector('.analyze-button');
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('.analyze-button');
     button.click();
     await fixture.whenStable();
-    expect(document.body.textContent).toContain(
-      'Error! Missing some data at Number Form.',
-    );
+    expect(document.body.textContent).toContain('Error! Missing some data at Number Form.');
     expect(router.url).not.toBe('/result');
   });
 
   it('marks the empty numeric fields invalid and shows field-level errors when analyze fails', async () => {
-    const button: HTMLButtonElement =
-      fixture.nativeElement.querySelector('.analyze-button');
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('.analyze-button');
     button.click();
     await fixture.whenStable();
 
@@ -167,11 +169,78 @@ describe('QuestionForm', () => {
     expect(router.url).toBe('/result');
   });
 
+  it('rejects a zero height and shows the range error without navigating', async () => {
+    setInputValue('age-input', '65');
+    setInputValue('height-input', '0');
+    setInputValue('weight-input', '50');
+    setInputValue('alb-input', '4');
+    await fixture.whenStable();
+
+    fixture.nativeElement.querySelector('.analyze-button').click();
+    await fixture.whenStable();
+
+    expect(router.url).not.toBe('/result');
+    const errors = [...fixture.nativeElement.querySelectorAll('mat-error')] as HTMLElement[];
+    expect(errors.some((error) => error.textContent?.includes('permitted range'))).toBe(true);
+  });
+
+  it('rejects a negative age and shows the range error without navigating', async () => {
+    setInputValue('age-input', '-5');
+    setInputValue('height-input', '150');
+    setInputValue('weight-input', '50');
+    setInputValue('alb-input', '4');
+    await fixture.whenStable();
+
+    fixture.nativeElement.querySelector('.analyze-button').click();
+    await fixture.whenStable();
+
+    expect(router.url).not.toBe('/result');
+    const errors = [...fixture.nativeElement.querySelectorAll('mat-error')] as HTMLElement[];
+    expect(errors.some((error) => error.textContent?.includes('permitted range'))).toBe(true);
+  });
+
+  it('rejects a non-integer age and shows the range error', async () => {
+    setInputValue('age-input', '65.5');
+    setInputValue('height-input', '150');
+    setInputValue('weight-input', '50');
+    setInputValue('alb-input', '4');
+    await fixture.whenStable();
+
+    fixture.nativeElement.querySelector('.analyze-button').click();
+    await fixture.whenStable();
+
+    expect(router.url).not.toBe('/result');
+    const errors = [...fixture.nativeElement.querySelectorAll('mat-error')] as HTMLElement[];
+    expect(errors.some((error) => error.textContent?.includes('permitted range'))).toBe(true);
+  });
+
+  it('navigates to the result page when all numeric values are within range', async () => {
+    setInputValue('age-input', '65');
+    setInputValue('height-input', '150');
+    setInputValue('weight-input', '50');
+    setInputValue('alb-input', '4');
+    await fixture.whenStable();
+
+    fixture.nativeElement.querySelector('.analyze-button').click();
+    await fixture.whenStable();
+
+    expect(router.url).toBe('/result');
+  });
+
+  it('clears validation errors when reset is clicked after a failed analyze', async () => {
+    fixture.nativeElement.querySelector('.analyze-button').click();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelectorAll('mat-error').length).toBeGreaterThan(0);
+
+    fixture.nativeElement.querySelector('.reset-button').click();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelectorAll('mat-error').length).toBe(0);
+  });
+
   it('resets all answers from the bottom reset button', async () => {
     store.numbers.set({ age: 65, heightCm: 150, weight: 50, alb: 4 });
     store.setField('sex', 'male');
-    const reset: HTMLButtonElement =
-      fixture.nativeElement.querySelector('.reset-button');
+    const reset: HTMLButtonElement = fixture.nativeElement.querySelector('.reset-button');
     reset.click();
     await fixture.whenStable();
     expect(store.data().sex).toBe('female');

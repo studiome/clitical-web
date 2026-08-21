@@ -70,6 +70,25 @@ describe('calculateBatchRows', () => {
     expect(result.ok).toBe(true);
   });
 
+  it('reports INVALID_CHOICE for a non-string categorical cell but REQUIRED for an empty one', () => {
+    const [numeric, empty] = calculateBatchRows([
+      { ...VALID_ROW, caseId: 'CASE-0003', sex: 1 },
+      { ...VALID_ROW, caseId: 'CASE-0004', sex: '' },
+    ]);
+
+    expect(numeric.ok).toBe(false);
+    if (numeric.ok) return;
+    expect(numeric.errors).toContainEqual(
+      expect.objectContaining({ field: 'sex', code: 'INVALID_CHOICE' }),
+    );
+
+    expect(empty.ok).toBe(false);
+    if (empty.ok) return;
+    expect(empty.errors).toContainEqual(
+      expect.objectContaining({ field: 'sex', code: 'REQUIRED' }),
+    );
+  });
+
   it('rejects unknown categorical values and a row without any lesion', () => {
     const [result] = calculateBatchRows([
       {

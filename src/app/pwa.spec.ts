@@ -6,6 +6,19 @@ import { describe, expect, it } from 'vitest';
 
 import { appConfig } from './app.config';
 
+interface NgswAssetGroupConfig {
+  name: string;
+  resources: { files: string[] };
+}
+
+interface NgswConfig {
+  assetGroups: NgswAssetGroupConfig[];
+}
+
+function readNgswConfig(): NgswConfig {
+  return JSON.parse(readFileSync('ngsw-config.json', 'utf8'));
+}
+
 interface ManifestIcon {
   src: string;
   sizes: string;
@@ -64,5 +77,16 @@ describe('service worker registration', () => {
   it('is provided by the application config', () => {
     TestBed.configureTestingModule({ providers: [appConfig.providers] });
     expect(TestBed.inject(SwUpdate)).toBeTruthy();
+  });
+});
+
+describe('service worker asset caching', () => {
+  it('caches the vendored ExcelJS bundle used by batch processing', () => {
+    const config = readNgswConfig();
+    const app = config.assetGroups.find((group) => group.name === 'app');
+    expect(app).toBeTruthy();
+    // ngsw globs: `*` does not cross `/`, so `/*.js` alone misses
+    // vendor/exceljs/exceljs.min.js. A `**` glob is required to cache it.
+    expect(app!.resources.files).toContain('/vendor/**/*.js');
   });
 });

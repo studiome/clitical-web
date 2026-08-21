@@ -83,11 +83,12 @@ function parseChoice<T extends string>(
   choices: readonly T[],
   errors: BatchValidationError[],
 ): T | null {
-  const value = typeof row[field] === 'string' ? row[field].trim() : '';
-  if (!value) {
+  const raw = row[field];
+  if (raw === null || raw === undefined || String(raw).trim() === '') {
     errors.push({ field, code: 'REQUIRED' });
     return null;
   }
+  const value = String(raw).trim();
   const match = choices.find((choice) => choice.toLowerCase() === value.toLowerCase());
   if (!match) {
     errors.push({ field, code: 'INVALID_CHOICE' });

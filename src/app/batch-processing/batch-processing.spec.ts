@@ -47,6 +47,31 @@ describe('BatchProcessing', () => {
     });
   });
 
+  it('clears the file input value after a read so re-selecting the same file fires change again', async () => {
+    const bytes = await createBatchTemplateWorkbook('en');
+    const template = new File([bytes as unknown as BlobPart], 'patients.xlsx');
+    const fixture = TestBed.createComponent(BatchProcessing);
+    await fixture.whenStable();
+    const input = fixture.nativeElement.querySelector('input[type="file"]') as HTMLInputElement;
+    Object.defineProperty(input, 'files', { value: [template] });
+    // jsdom refuses `input.value = '<path>'` for file inputs, so fake an
+    // already-chosen value directly on the property descriptor to observe
+    // whether selectFile() clears it afterwards.
+    Object.defineProperty(input, 'value', {
+      value: 'C:\\fakepath\\patients.xlsx',
+      writable: true,
+      configurable: true,
+    });
+
+    input.dispatchEvent(new Event('change'));
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect((fixture.nativeElement as HTMLElement).textContent).toContain('No patient rows');
+    });
+
+    expect(input.value).toBe('');
+  });
+
   it('downloads the Japanese and English templates without sending data to a server', async () => {
     const createObjectURL = vi.fn(() => 'blob:test');
     const revokeObjectURL = vi.fn();
