@@ -1,4 +1,10 @@
-import { PatientData } from './patient-data';
+import {
+  Activity,
+  Ckd,
+  MalignantNeoplasm,
+  PatientData,
+  RutherfordClassification,
+} from './patient-data';
 
 export type OsRisk =
   | 'high' // risk < 50%
@@ -169,12 +175,7 @@ const SHORT_MALE_COEFF: CoeffMap = {
 };
 
 export function calculatePatientRisk(data: PatientData): PatientRisk {
-  if (
-    data.weight === null ||
-    data.height === null ||
-    data.age === null ||
-    data.alb === null
-  ) {
+  if (data.weight === null || data.height === null || data.age === null || data.alb === null) {
     throw new RiskCalculationError('form is empty', 'NumberForm');
   }
   if (!data.hasAILesion && !data.hasFPLesion && !data.hasBKLesion) {
@@ -187,8 +188,7 @@ export function calculatePatientRisk(data: PatientData): PatientRisk {
   const predictedAFS = Math.pow(AFS_H0_COEFF, Math.exp(calcSigma(data, gnriRisk, AFS_COEFF)));
   const predicted30DDeathOrAmputation =
     1.0 / (1.0 + Math.exp(calcSigma(data, gnriRisk, SHORT_DEATH_OR_AMPUTATION_COEFF)));
-  const predicted30DMALE =
-    1.0 / (1.0 + Math.exp(calcSigma(data, gnriRisk, SHORT_MALE_COEFF)));
+  const predicted30DMALE = 1.0 / (1.0 + Math.exp(calcSigma(data, gnriRisk, SHORT_MALE_COEFF)));
 
   return {
     gnri,
@@ -201,6 +201,108 @@ export function calculatePatientRisk(data: PatientData): PatientRisk {
   };
 }
 
+// --- Covariate selection ---------------------------------------------------
+// Each patient attribute is mapped to the covariate it activates.
+// `null` means the value is the reference category and adds no covariate.
+
+const AGE_COVARIATES: readonly (readonly [number, Covariate])[] = [
+  [85, 'ageOver85'],
+  [75, 'age75to84'],
+  [65, 'age65to74'],
+  // under 65 is the reference
+];
+
+const CKD_COVARIATE: Record<Ckd, Covariate | null> = {
+  normal: null,
+  g3: 'hasCKDG3',
+  g4: 'hasCKDG4',
+  g5: 'hasCKDG5',
+  g5D: 'hasCKDG5D', // HD
+};
+
+const GNRI_COVARIATE: Record<GnriRisk, Covariate> = {
+  noRisk: 'gnriNoOrLow',
+  low: 'gnriNoOrLow',
+  moderate: 'gnriModerate',
+  major: 'gnriMajor',
+};
+
+const ACTIVITY_COVARIATE: Record<Activity, Covariate> = {
+  ambulatory: 'activityAmbulatory',
+  wheelchair: 'activityWheelChair',
+  immobile: 'activityImmobile',
+};
+
+const MALIGNANT_COVARIATE: Record<MalignantNeoplasm, Covariate | null> = {
+  no: null,
+  pastHistory: 'pastMalignancy',
+  underTreatment: 'treatingMalignancy',
+};
+
+const RUTHERFORD_COVARIATE: Record<RutherfordClassification, Covariate> = {
+  class4: 'rutherford4',
+  class5: 'rutherford5',
+  class6: 'rutherford6',
+};
+
+// Covariates activated by a boolean condition on the patient data.
+//
+// occlusive lesion
+// EJVES occlusive classification
+// | AI | FP | BK | 2yr occlusive lesion
+// | +  | +- | +- | AI
+// | -  | +  | +- | FP without AI
+// | -  | -  | +  | Below IP
+// | -  | -  | -  | undefined
+const FLAG_COVARIATES: Partial<Record<Covariate, (data: PatientData) => boolean>> = {
+  isFemale: (d) => d.sex === 'female',
+  hasCHF: (d) => d.hasCHF,
+  hasCVD: (d) => d.hasCVD,
+  // 30 days
+  hasNoAIlesion: (d) => !d.hasAILesion,
+  hasNoFPlesion: (d) => !d.hasFPLesion,
+  // 2yr
+  lesionFP: (d) => !d.hasAILesion && d.hasFPLesion,
+  lesionBelowIP: (d) => !d.hasAILesion && !d.hasFPLesion && d.hasBKLesion,
+  isUrgent: (d) => d.isUrgent,
+  fever: (d) => d.hasFever,
+  abnormalWBC: (d) => d.hasAbnormalWBC,
+  localInfection: (d) => d.hasLocalInfection,
+  hasCAD: (d) => d.hasCAD,
+  isSmoking: (d) => d.isSmoking,
+  hasDislipidemia: (d) => d.hasDyslipidemia,
+  hasNoContralateral: (d) => !d.hasContraLateralLesion,
+  hasOther: (d) => d.hasOtherVD,
+};
+
+const FLAG_COVARIATE_ENTRIES = Object.entries(FLAG_COVARIATES) as readonly [
+  Covariate,
+  (data: PatientData) => boolean,
+][];
+
+const GNRI_RISK_THRESHOLDS: readonly (readonly [number, GnriRisk])[] = [
+  [98, 'noRisk'],
+  [92, 'low'],
+  [82, 'moderate'],
+  [Number.NEGATIVE_INFINITY, 'major'],
+];
+
+const OS_RISK_THRESHOLDS: readonly (readonly [number, OsRisk])[] = [
+  [0.7, 'low'],
+  [0.5, 'medium'],
+  [Number.NEGATIVE_INFINITY, 'high'],
+];
+
+// Returns the first entry whose lower bound the value reaches,
+// or null when the value is NaN or below every bound.
+function classifyByThreshold<T>(
+  value: number,
+  thresholds: readonly (readonly [number, T])[],
+): T | null {
+  if (Number.isNaN(value)) return null;
+  return thresholds.find(([lowerBound]) => value >= lowerBound)?.[1] ?? null;
+}
+
 function calcGnri(data: PatientData): number {
   if (data.height === 0.0) return NaN;
   let wi = data.weight! / (22.0 * Math.pow(data.height!, 2));
@@ -209,140 +311,35 @@ function calcGnri(data: PatientData): number {
 }
 
 function classifyGnriRisk(gnri: number): GnriRisk | null {
-  if (Number.isNaN(gnri)) return null;
-  if (gnri >= 98) return 'noRisk';
-  if (gnri >= 92) return 'low';
-  if (gnri >= 82) return 'moderate';
-  return 'major';
+  return classifyByThreshold(gnri, GNRI_RISK_THRESHOLDS);
 }
 
 function classifyOsRisk(overallSurvival: number): OsRisk | null {
-  if (Number.isNaN(overallSurvival)) return null;
-  if (overallSurvival >= 0.7) return 'low';
-  if (overallSurvival >= 0.5) return 'medium';
-  return 'high';
+  return classifyByThreshold(overallSurvival, OS_RISK_THRESHOLDS);
 }
 
-function calcSigma(
-  data: PatientData,
-  gnriRisk: GnriRisk | null,
-  coeff: CoeffMap,
-): number {
-  let sigma = 0.0;
+function selectCovariates(data: PatientData, gnriRisk: GnriRisk): Covariate[] {
+  const selected: (Covariate | null)[] = [
+    classifyByThreshold(data.age!, AGE_COVARIATES),
+    CKD_COVARIATE[data.ckd],
+    GNRI_COVARIATE[gnriRisk],
+    ACTIVITY_COVARIATE[data.activity],
+    MALIGNANT_COVARIATE[data.malignant],
+    RUTHERFORD_COVARIATE[data.rutherford],
+    ...FLAG_COVARIATE_ENTRIES.filter(([, isActive]) => isActive(data)).map(
+      ([covariate]) => covariate,
+    ),
+    'intercept',
+  ];
+  return selected.filter((covariate) => covariate !== null);
+}
 
-  if (data.sex === 'female') sigma += coeff.isFemale ?? 0.0;
-
-  if (data.age! >= 85) {
-    sigma += coeff.ageOver85 ?? 0.0;
-  } else if (data.age! >= 75) {
-    sigma += coeff.age75to84 ?? 0.0;
-  } else if (data.age! >= 65) {
-    sigma += coeff.age65to74 ?? 0.0;
-  }
-
-  if (data.hasCHF) sigma += coeff.hasCHF ?? 0.0;
-  if (data.hasCVD) sigma += coeff.hasCVD ?? 0.0;
-
-  switch (data.ckd) {
-    case 'g3':
-      sigma += coeff.hasCKDG3 ?? 0.0;
-      break;
-    case 'g4':
-      sigma += coeff.hasCKDG4 ?? 0.0;
-      break;
-    case 'g5':
-      sigma += coeff.hasCKDG5 ?? 0.0;
-      break;
-    case 'g5D':
-      sigma += coeff.hasCKDG5D ?? 0.0;
-      break;
-    default:
-      break;
-  }
-
+function calcSigma(data: PatientData, gnriRisk: GnriRisk | null, coeff: CoeffMap): number {
   // if GNRI could not be calculated, the whole predictor is undefined
   if (gnriRisk === null) return NaN;
 
-  switch (gnriRisk) {
-    case 'noRisk':
-    case 'low':
-      sigma += coeff.gnriNoOrLow ?? 0.0;
-      break;
-    case 'moderate':
-      sigma += coeff.gnriModerate ?? 0.0;
-      break;
-    case 'major':
-      sigma += coeff.gnriMajor ?? 0.0;
-      break;
-  }
-
-  switch (data.activity) {
-    case 'ambulatory':
-      sigma += coeff.activityAmbulatory ?? 0.0;
-      break;
-    case 'wheelchair':
-      sigma += coeff.activityWheelChair ?? 0.0;
-      break;
-    case 'immobile':
-      sigma += coeff.activityImmobile ?? 0.0;
-      break;
-  }
-
-  switch (data.malignant) {
-    case 'pastHistory':
-      sigma += coeff.pastMalignancy ?? 0.0;
-      break;
-    case 'underTreatment':
-      sigma += coeff.treatingMalignancy ?? 0.0;
-      break;
-    default:
-      break;
-  }
-
-  // occlusive lesion
-  // EJVES occlusive classification
-  // | AI | FP | BK | 2yr occlusive lesion
-  // | +  | +- | +- | AI
-  // | -  | +  | +- | FP without AI
-  // | -  | -  | +  | Below IP
-  // | -  | -  | -  | undefined
-  //
-  // 30 days
-  if (!data.hasAILesion) sigma += coeff.hasNoAIlesion ?? 0.0;
-  if (!data.hasFPLesion) sigma += coeff.hasNoFPlesion ?? 0.0;
-
-  // 2yr
-  if (!data.hasAILesion) {
-    if (data.hasFPLesion) {
-      sigma += coeff.lesionFP ?? 0.0;
-    } else if (data.hasBKLesion) {
-      sigma += coeff.lesionBelowIP ?? 0.0;
-    }
-  }
-
-  if (data.isUrgent) sigma += coeff.isUrgent ?? 0.0;
-  if (data.hasFever) sigma += coeff.fever ?? 0.0;
-  if (data.hasAbnormalWBC) sigma += coeff.abnormalWBC ?? 0.0;
-  if (data.hasLocalInfection) sigma += coeff.localInfection ?? 0.0;
-  if (data.hasCAD) sigma += coeff.hasCAD ?? 0.0;
-  if (data.isSmoking) sigma += coeff.isSmoking ?? 0.0;
-  if (data.hasDyslipidemia) sigma += coeff.hasDislipidemia ?? 0.0;
-  if (!data.hasContraLateralLesion) sigma += coeff.hasNoContralateral ?? 0.0;
-  if (data.hasOtherVD) sigma += coeff.hasOther ?? 0.0;
-
-  switch (data.rutherford) {
-    case 'class4':
-      sigma += coeff.rutherford4 ?? 0.0;
-      break;
-    case 'class5':
-      sigma += coeff.rutherford5 ?? 0.0;
-      break;
-    case 'class6':
-      sigma += coeff.rutherford6 ?? 0.0;
-      break;
-  }
-
-  sigma += coeff.intercept ?? 0.0;
-
-  return sigma;
+  return selectCovariates(data, gnriRisk).reduce(
+    (sigma, covariate) => sigma + (coeff[covariate] ?? 0.0),
+    0.0,
+  );
 }
