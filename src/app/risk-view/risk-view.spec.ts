@@ -5,6 +5,7 @@ import { provideRouter, Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PatientDataStore } from '../services/patient-data-store';
+import { TranslationService } from '../services/translation';
 import { RiskView } from './risk-view';
 
 @Component({ template: '' })
@@ -21,6 +22,7 @@ describe('RiskView', () => {
         provideRouter([{ path: '', component: Blank }]),
       ],
     });
+    TestBed.inject(TranslationService).setLocale('en');
     store = TestBed.inject(PatientDataStore);
   });
 

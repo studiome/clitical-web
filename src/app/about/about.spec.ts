@@ -11,6 +11,7 @@ describe('About', () => {
       imports: [About],
       providers: [provideNoopAnimations()],
     });
+    TestBed.inject(TranslationService).setLocale('en');
   });
 
   it('describes the model, five predicted indicators, limitations, privacy, disclaimer, and credits', async () => {

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { TranslationService } from '../services/translation';
 import { References } from './references';
 
 describe('References', () => {
@@ -10,6 +11,7 @@ describe('References', () => {
       imports: [References],
       providers: [provideNoopAnimations()],
     });
+    TestBed.inject(TranslationService).setLocale('en');
   });
 
   it('shows the tap-to-open hint', async () => {
