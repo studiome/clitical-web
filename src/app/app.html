@@ -1,17 +1,37 @@
-<a class="skip-link" href="#main-content">{{ t().skipToContent }}</a>
+@if (intendedUseAcknowledged()) {
+  <a class="skip-link" href="#main-content">{{ t().skipToContent }}</a>
 
-<header>
-  <mat-toolbar class="app-toolbar">
-    <span class="app-title">{{ t().appName }}</span>
-  </mat-toolbar>
-</header>
+  <header>
+    @if (isAbout()) {
+      <mat-toolbar class="about-toolbar">
+        <a
+          mat-icon-button
+          class="about-back"
+          routerLink="/settings"
+          [attr.aria-label]="t().backToSettings"
+        >
+          <mat-icon aria-hidden="true">arrow_back</mat-icon>
+        </a>
+        <span class="toolbar-page-title">{{ t().about }}</span>
+      </mat-toolbar>
+    } @else {
+      <mat-toolbar class="app-toolbar">
+        <span class="app-title">{{ t().appName }}</span>
+      </mat-toolbar>
+    }
+  </header>
 
-<main id="main-content" tabindex="-1" #mainContent>
-  <router-outlet />
-</main>
+  <main id="main-content" tabindex="-1" #mainContent>
+    <router-outlet />
+  </main>
 
-<app-navigation
-  [destinations]="destinations()"
-  [activeId]="activeId()"
-  [ariaLabel]="t().appName"
-/>
+  <app-navigation
+    [destinations]="destinations()"
+    [activeId]="activeId()"
+    [ariaLabel]="t().appName"
+  />
+} @else {
+  <main id="main-content" class="gate-main" tabindex="-1" #mainContent>
+    <app-intended-use />
+  </main>
+}

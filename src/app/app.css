@@ -14,6 +14,19 @@ header {
   margin: 0;
 }
 
+.about-toolbar {
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+}
+
+.about-back {
+  margin-inline-start: -8px;
+}
+
+.toolbar-page-title {
+  font: var(--mat-sys-title-large);
+}
+
 /* Off-screen until focused, per the standard clip/transform skip-link
    technique (display: none would make it unreachable by keyboard). */
 .skip-link {
@@ -48,6 +61,10 @@ header {
 main {
   display: block;
   padding-bottom: 88px;
+}
+
+main.gate-main {
+  padding-bottom: 0;
 }
 
 @media (min-width: 600px) {

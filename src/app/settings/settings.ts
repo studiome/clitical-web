@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { MatRadioChange, MatRadioModule } from '@angular/material/radio';
+import { RouterLink } from '@angular/router';
 
 import { APP_VERSION } from '../app-version';
 import { AppLocale } from '../services/messages';
@@ -7,7 +8,7 @@ import { TranslationService } from '../services/translation';
 
 @Component({
   selector: 'app-settings',
-  imports: [MatRadioModule],
+  imports: [MatRadioModule, RouterLink],
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
 })

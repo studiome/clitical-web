@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -7,13 +8,45 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { App } from './app';
 import { routes } from './app.routes';
 import { PatientDataStore } from './services/patient-data-store';
+import { IntendedUseService } from './services/intended-use';
+import { TranslationService } from './services/translation';
 
 describe('App', () => {
+  const acknowledged = signal(true);
+
   beforeEach(async () => {
+    acknowledged.set(true);
     TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideNoopAnimations(), provideRouter(routes)],
+      providers: [
+        provideNoopAnimations(),
+        provideRouter(routes),
+        {
+          provide: IntendedUseService,
+          useValue: {
+            isAcknowledged: acknowledged.asReadonly(),
+            acknowledge: () => acknowledged.set(true),
+          },
+        },
+      ],
     });
+  });
+
+  it('shows only the intended-use notice until it is acknowledged', async () => {
+    acknowledged.set(false);
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const root = fixture.nativeElement as HTMLElement;
+
+    expect(root.textContent).toContain('Before you begin');
+    expect(root.textContent).toContain('This is not a medical device');
+    expect(root.querySelector('mat-toolbar')).toBeNull();
+    expect(root.querySelector('app-navigation')).toBeNull();
+    expect(TestBed.inject(Title).getTitle()).toBe('Before you begin | CLiTICAL');
+
+    root.querySelector<HTMLButtonElement>('app-intended-use button')!.click();
+    await fixture.whenStable();
+    expect(root.querySelector('mat-toolbar')?.textContent).toContain('CLiTICAL');
   });
 
   it('creates the app shell with the CLiTICAL title', async () => {
@@ -38,6 +71,37 @@ describe('App', () => {
     await fixture.whenStable();
     const toolbar: HTMLElement = fixture.nativeElement.querySelector('mat-toolbar');
     expect(toolbar.querySelector('button')).toBeNull();
+  });
+
+  it('uses the app toolbar on ordinary routes and an About toolbar with a back link', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const router = TestBed.inject(Router);
+    const root = fixture.nativeElement as HTMLElement;
+
+    expect(root.querySelector('.app-toolbar .app-title')?.textContent).toContain('CLiTICAL');
+    expect(root.querySelector('.about-toolbar')).toBeNull();
+
+    await router.navigateByUrl('/settings/about');
+    await fixture.whenStable();
+    const aboutToolbar = root.querySelector('.about-toolbar');
+    expect(aboutToolbar).not.toBeNull();
+    const backLink = aboutToolbar?.querySelector<HTMLAnchorElement>('a.about-back');
+    expect(backLink?.getAttribute('href')).toBe('/settings');
+    expect(backLink?.hasAttribute('mat-icon-button')).toBe(true);
+    expect(backLink?.getAttribute('aria-label')).toBe('Back to Settings');
+    expect(aboutToolbar?.querySelector('mat-icon')?.textContent).toContain('arrow_back');
+    expect(aboutToolbar?.textContent).toContain('About');
+    expect(root.querySelector('.app-toolbar')).toBeNull();
+
+    TestBed.inject(TranslationService).setLocale('ja');
+    fixture.detectChanges();
+    expect(aboutToolbar?.getAttribute('aria-label')).toBeNull();
+    expect(aboutToolbar?.querySelector('.about-back')?.getAttribute('aria-label')).toBe(
+      '設定に戻る',
+    );
+    expect(aboutToolbar?.textContent).toContain('このアプリについて');
+    TestBed.inject(TranslationService).setLocale('en');
   });
 
   it('shows the question form on the home route', async () => {
@@ -149,6 +213,10 @@ describe('App', () => {
     await fixture.whenStable();
     expect(titleService.getTitle()).toBe('Settings | CLiTICAL');
 
+    await TestBed.inject(Router).navigateByUrl('/settings/about');
+    await fixture.whenStable();
+    expect(titleService.getTitle()).toBe('About | CLiTICAL');
+
     // RiskView redirects back to '/' when there is no calculated risk, so
     // give the store something to show before navigating there.
     const store = TestBed.inject(PatientDataStore);
@@ -167,6 +235,8 @@ describe('App', () => {
 
     await TestBed.inject(Router).navigateByUrl('/references');
     await fixture.whenStable();
-    expect(document.activeElement).toBe(main);
+    const heading = main.querySelector('h1');
+    expect(heading?.getAttribute('tabindex')).toBe('-1');
+    expect(document.activeElement).toBe(heading);
   });
 });

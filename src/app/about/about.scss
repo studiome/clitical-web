@@ -1,0 +1,99 @@
+:host {
+  display: block;
+}
+
+.about-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 56px;
+}
+
+.about-header {
+  padding: 8px 0 24px;
+  text-align: center;
+}
+
+.about-mark {
+  color: var(--mat-sys-primary);
+  font-size: 42px;
+  width: 42px;
+  height: 42px;
+}
+
+.about-header h1 {
+  font: var(--mat-sys-headline-small);
+  margin: 8px 0 4px;
+}
+
+/* Route changes focus the heading so assistive technology announces the new
+   page. It is not an interactive control, so a persistent focus ring would
+   add visual emphasis without conveying an available action. */
+.about-header h1[tabindex='-1']:focus {
+  outline: none;
+}
+
+.about-header p {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-large);
+  margin: 0;
+}
+
+.about-brand {
+  color: var(--mat-sys-on-surface) !important;
+  font: var(--mat-sys-title-medium) !important;
+}
+
+.about-tagline {
+  margin-top: 2px !important;
+}
+
+.about-card {
+  margin-top: 16px;
+}
+
+.about-card mat-card-content {
+  padding: 0 20px;
+}
+
+.about-section {
+  padding: 20px 0;
+}
+
+.about-section + .about-section {
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
+
+.about-section h2 {
+  font: var(--mat-sys-title-large);
+  margin: 0 0 10px;
+}
+
+.about-section p {
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  white-space: pre-line;
+}
+
+.prediction-list {
+  margin: 0 -20px;
+  padding: 0;
+}
+
+.prediction-list mat-icon {
+  color: var(--mat-sys-primary);
+}
+
+.prediction-list [matListItemTitle] {
+  white-space: normal;
+}
+
+.section-footer {
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-small) !important;
+  margin-top: 8px !important;
+}
+
+.credits-list {
+  margin: 0 -20px;
+  padding: 0;
+}

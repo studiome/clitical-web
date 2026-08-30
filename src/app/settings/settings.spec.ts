@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TranslationService } from '../services/translation';
@@ -24,7 +25,7 @@ describe('Settings', () => {
     vi.stubGlobal('localStorage', createStorageMock());
     TestBed.configureTestingModule({
       imports: [Settings],
-      providers: [provideNoopAnimations()],
+      providers: [provideNoopAnimations(), provideRouter([])],
     });
   });
 
@@ -111,7 +112,16 @@ describe('Settings', () => {
     const fixture = TestBed.createComponent(Settings);
     await fixture.whenStable();
     const text = (fixture.nativeElement as HTMLElement).textContent!;
-    expect(text).toContain('2.1.0');
+    expect(text).toContain('2.1.1');
     expect(text).toContain('JSVS');
+  });
+
+  it('links the app information row to the detailed About screen', async () => {
+    const fixture = TestBed.createComponent(Settings);
+    await fixture.whenStable();
+    const link = (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>(
+      'a.about',
+    );
+    expect(link?.getAttribute('href')).toBe('/settings/about');
   });
 });

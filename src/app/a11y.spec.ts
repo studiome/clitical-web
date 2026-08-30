@@ -7,6 +7,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from './app';
 import { routes } from './app.routes';
+import { About } from './about/about';
 import { BatchProcessing } from './batch-processing/batch-processing';
 import { createBatchTemplateWorkbook } from './batch-processing/batch-workbook';
 import { QuestionForm } from './question-form/question-form';
@@ -124,6 +125,12 @@ describe('accessibility (axe)', () => {
 
   it('settings page has no axe violations', async () => {
     const fixture = TestBed.createComponent(Settings);
+    await fixture.whenStable();
+    await expectNoViolations(fixture.nativeElement);
+  });
+
+  it('About page has no axe violations', async () => {
+    const fixture = TestBed.createComponent(About);
     await fixture.whenStable();
     await expectNoViolations(fixture.nativeElement);
   });

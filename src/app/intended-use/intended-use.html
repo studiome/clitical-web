@@ -1,0 +1,30 @@
+<section class="gate" aria-labelledby="disclaimer-title">
+  <header class="gate-header">
+    <mat-icon aria-hidden="true">warning_amber</mat-icon>
+    <h1 id="disclaimer-title">{{ t().disclaimerTitle }}</h1>
+    <p class="headline">{{ t().disclaimerHeadline }}</p>
+  </header>
+
+  <div class="notice-list">
+    @for (point of points; track point.title) {
+      <section class="notice-point" [attr.aria-labelledby]="point.title">
+        <h2 [id]="point.title">
+          <mat-icon aria-hidden="true">{{ point.icon }}</mat-icon>
+          <span>{{ t()[point.title] }}</span>
+        </h2>
+        <p>{{ t()[point.body] }}</p>
+      </section>
+    }
+  </div>
+
+  <div class="gate-actions">
+    <a class="terms-link" [href]="termsUrl()" target="_blank" rel="noopener">
+      <span>{{ t().disclaimerReadTerms }}</span>
+      <mat-icon aria-hidden="true">open_in_new</mat-icon>
+    </a>
+    <button mat-flat-button type="button" (click)="acknowledge()">
+      {{ t().disclaimerAcknowledge }}
+    </button>
+    <p class="acknowledge-footer">{{ t().disclaimerAcknowledgeFooter }}</p>
+  </div>
+</section>

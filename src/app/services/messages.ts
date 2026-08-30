@@ -108,6 +108,60 @@ const EN = {
   version: 'Version',
   tapToOpenLink: 'Tap to open link.',
   appLegalese: '2022 Kazuhiro Miyahara, JSVS, JCLIMB',
+  disclaimerTitle: 'Before you begin',
+  disclaimerHeadline: 'A reference tool for healthcare professionals',
+  disclaimerIntendedUser: 'Who this app is for',
+  disclaimerIntendedUserBody:
+    'This app is intended for use by physicians and other healthcare professionals involved in the care of chronic limb-threatening ischaemia (CLTI). It is not intended for patients or their families to assess their own condition.',
+  disclaimerNotADevice: 'This is not a medical device',
+  disclaimerNotADeviceBody:
+    'This app is not a medical device and performs no diagnosis, treatment or disease prevention. It has not been approved, certified or registered as a medical device in any country or region.',
+  disclaimerValues: 'About the values it shows',
+  disclaimerValuesBody:
+    'The values shown are population-level estimates obtained by applying your entries to statistical models published in peer-reviewed journals. They are not measurements, and they neither predict nor guarantee the outcome of any individual patient.',
+  disclaimerPopulation: 'Scope and limitations',
+  disclaimerPopulationBody:
+    'The prediction models were derived from patients who underwent revascularisation for CLTI in Japan and were registered in the JCLIMB registry of the Japanese Society for Vascular Surgery. Accuracy is not assured for other populations, procedures or care settings.',
+  disclaimerResponsibility: 'The final decision',
+  disclaimerResponsibilityBody:
+    'Diagnosis and treatment decisions remain the responsibility of the attending physician, based on an overall assessment of the patient. Nothing this app displays replaces clinical judgement.',
+  disclaimerReadTerms: 'Read the Terms of Use and disclaimer',
+  disclaimerAcknowledge: 'I understand',
+  disclaimerAcknowledgeFooter:
+    'By tapping “I understand” you agree to the above and to the Terms of Use, and may then use the app.',
+  disclaimerShortNotice:
+    'This app is not a medical device. The values above are population-level estimates from published statistical models; diagnosis and treatment decisions remain with the attending physician.',
+  aboutTagline: 'CLTI revascularisation risk prediction',
+  aboutOverview: 'Overview',
+  aboutOverviewBody:
+    'CLiTICAL predicts post-operative risks of revascularisation for chronic limb-threatening ischaemia (CLTI) from patient data, using prediction models built on the JCLIMB registry of the Japanese Society for Vascular Surgery.',
+  aboutPredictions: 'What it predicts',
+  aboutPredictionsFooter: 'Enter the patient data, then tap Predict risks to calculate.',
+  aboutIntendedUse: 'Intended use',
+  aboutIntendedUseBody:
+    'This app presents healthcare professionals with reference information on peri-operative and mid-term outcomes after revascularisation for CLTI, based on published prediction models. It performs no diagnosis, treatment or disease prevention, and has not been approved, certified or registered as a medical device.',
+  aboutModelSource: 'Model source',
+  aboutModelSourceBody:
+    'The prediction equations are based on two peer-reviewed papers. The original articles are available from the References tab.',
+  aboutMethodology: 'How the values are calculated',
+  aboutMethodologyBody:
+    'The 30-day death or major amputation rate and the 30-day MALE rate are calculated with logistic regression; two-year OS and AFS with Cox proportional hazards models (baseline survival 0.922 for OS and 0.876 for AFS). GNRI is 14.89 × Alb + 41.7 × min(weight / (22 × height²), 1.0), classified as no risk at 98 or above, mild at 92–98, moderate at 82–92 and major below 82. Every explanatory variable and regression coefficient is taken as published in the original articles.',
+  aboutLimitations: 'Scope and limitations',
+  aboutLimitationsBody:
+    'The models were derived from patients who underwent revascularisation for CLTI in Japan and were registered in the JCLIMB registry of the Japanese Society for Vascular Surgery. Accuracy is not assured for other populations, procedures or care settings. The values are population-level estimates and do not describe the outcome of an individual patient.',
+  aboutPrivacy: 'Privacy',
+  aboutPrivacyBody:
+    'Patient data is processed only in this browser and is never sent or stored elsewhere. This browser saves only the language you select and the version of the intended-use notice you acknowledged.',
+  aboutDisclaimer: 'Disclaimer',
+  aboutDisclaimerBody:
+    'This app is intended to support the clinical judgement of healthcare professionals. The values it calculates are estimates from statistical models and do not determine diagnosis or treatment. The final decision remains the responsibility of the attending physician.',
+  aboutCredits: 'Credits',
+  aboutPublisher: 'Published by',
+  aboutPublisherName: 'Japanese Society for Vascular Surgery / JCLIMB Committee',
+  aboutDeveloper: 'Developed by',
+  aboutDeveloperName: 'Kazuhiro Miyahara',
+  aboutVersion: 'Version',
+  aboutBuild: 'Build',
   language: 'Language',
   en: 'English',
   ja: '日本語',
@@ -139,6 +193,7 @@ const EN = {
   support: 'Support',
   notAvailable: 'N/A',
   skipToContent: 'Skip to main content',
+  backToSettings: 'Back to Settings',
   numberFieldRequiredError: 'This value is required.',
   numberFieldRangeError: 'Enter a value in the permitted range.',
 };
@@ -253,6 +308,60 @@ const JA: Messages = {
   tapToOpenLink: '論文サイトを開きます。',
   appLegalese:
     '2022 発行: 特定非営利法人日本血管外科学会、JCLIMB委員会、ソフトウェア制作: 宮原和洋',
+  disclaimerTitle: 'ご利用にあたって',
+  disclaimerHeadline: '本アプリは医療従事者向けの参考ツールです',
+  disclaimerIntendedUser: '対象となる利用者',
+  disclaimerIntendedUserBody:
+    '本アプリは、包括的高度慢性下肢虚血 (CLTI) の診療に携わる医師をはじめとする医療従事者による利用を前提としています。患者ご本人やご家族が、ご自身の状態を判断するために使用することを意図したものではありません。',
+  disclaimerNotADevice: '医療機器ではありません',
+  disclaimerNotADeviceBody:
+    '本アプリは医療機器ではなく、診断・治療・疾病の予防を行う機能を持ちません。いずれの国・地域においても、医療機器としての承認・認証・届出を受けたものではありません。',
+  disclaimerValues: '算出される値について',
+  disclaimerValuesBody:
+    '表示される値は、査読付き論文として公表された統計モデルに入力値を当てはめて得られる集団レベルの推定値です。測定値ではなく、また個々の患者の転帰を予測・保証するものでもありません。',
+  disclaimerPopulation: '適用範囲と限界',
+  disclaimerPopulationBody:
+    '予測モデルは、日本血管外科学会 JCLIMB レジストリに登録された、日本国内で血行再建術を受けた CLTI 患者のデータから導出されています。対象集団・術式・診療体制が異なる場合、推定の精度は保証されません。',
+  disclaimerResponsibility: '最終的な判断',
+  disclaimerResponsibilityBody:
+    '診断および治療方針の決定は、患者の状態を総合的に評価したうえで、担当医師の責任において行ってください。本アプリの表示は臨床判断を代替するものではありません。',
+  disclaimerReadTerms: '利用規約・免責事項を読む',
+  disclaimerAcknowledge: '内容を理解しました',
+  disclaimerAcknowledgeFooter:
+    '「内容を理解しました」をタップすると、上記および利用規約に同意したうえで本アプリを利用することになります。',
+  disclaimerShortNotice:
+    '本アプリは医療機器ではありません。表示値は公表論文の統計モデルによる集団レベルの推定であり、診断・治療方針の判断は担当医師が行ってください。',
+  aboutTagline: 'CLTI血行再建リスク予測',
+  aboutOverview: '概要',
+  aboutOverviewBody:
+    'CLiTICALは、包括的高度慢性下肢虚血 (CLTI) に対する血行再建術の術後リスクを、患者データから予測するアプリです。日本血管外科学会のJCLIMBレジストリをもとに構築された予測モデルを実装しています。',
+  aboutPredictions: '予測できる指標',
+  aboutPredictionsFooter: '患者データを入力し、「リスクを予測」をタップすると算出されます。',
+  aboutIntendedUse: '使用目的',
+  aboutIntendedUseBody:
+    '本アプリは、CLTI に対する血行再建術の周術期および中期予後について、公表された予測モデルに基づく参考情報を医療従事者に提示することを目的としています。診断・治療・疾病の予防を行う機能はなく、医療機器としての承認・認証・届出を受けたものではありません。',
+  aboutModelSource: 'モデルの出典',
+  aboutModelSourceBody:
+    '予測式は査読付き論文2編に基づいています。原著は「参考文献」タブから参照できます。',
+  aboutMethodology: '算出方法',
+  aboutMethodologyBody:
+    '術後30日の死亡・大切断率および MALE 発生率はロジスティック回帰、2年 OS・AFS は Cox 比例ハザードモデル (基準生存率 OS 0.922、AFS 0.876) で算出します。GNRI は 14.89 × Alb + 41.7 × min(体重 / (22 × 身長²), 1.0) で算出し、98以上＝リスクなし、92〜98＝軽度、82〜92＝中等度、82未満＝高度に分類します。説明変数と回帰係数は、いずれも原著論文に記載された値をそのまま用いています。',
+  aboutLimitations: '適用範囲と限界',
+  aboutLimitationsBody:
+    '予測モデルは、日本血管外科学会 JCLIMB レジストリに登録された、日本国内で血行再建術を受けた CLTI 患者のデータから導出されたものです。対象集団・術式・診療体制が異なる場合、推定の精度は保証されません。表示値は集団レベルの推定であり、個々の患者の転帰を示すものではありません。',
+  aboutPrivacy: 'プライバシー',
+  aboutPrivacyBody:
+    '入力された患者データはこのブラウザ内でのみ処理され、外部への送信・保存は行いません。このブラウザに保存されるのは選択した言語と、同意した意図された使用目的の注意文のバージョンだけです。',
+  aboutDisclaimer: '免責事項',
+  aboutDisclaimerBody:
+    '本アプリは医療従事者の臨床判断を支援することを目的としています。算出される値は統計モデルによる推定であり、診断や治療方針を決定するものではありません。最終的な判断は担当医師の責任において行ってください。',
+  aboutCredits: 'クレジット',
+  aboutPublisher: '発行',
+  aboutPublisherName: '特定非営利活動法人 日本血管外科学会 / JCLIMB委員会',
+  aboutDeveloper: 'ソフトウェア制作',
+  aboutDeveloperName: '宮原和洋',
+  aboutVersion: 'バージョン',
+  aboutBuild: 'ビルド',
   language: '言語',
   en: 'English',
   ja: '日本語',
@@ -283,6 +392,7 @@ const JA: Messages = {
   support: 'サポート',
   notAvailable: 'N/A',
   skipToContent: '本文へスキップ',
+  backToSettings: '設定に戻る',
   numberFieldRequiredError: '入力してください。',
   numberFieldRangeError: '入力可能な範囲の数値を入力してください。',
 };

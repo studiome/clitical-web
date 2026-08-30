@@ -1,0 +1,90 @@
+<article class="about-page" aria-labelledby="about-title">
+  <header class="about-header">
+    <mat-icon class="about-mark" aria-hidden="true">monitor_heart</mat-icon>
+    <h1 id="about-title">{{ t().about }}</h1>
+    <p class="about-brand">{{ t().appName }}</p>
+    <p class="about-tagline">{{ t().aboutTagline }}</p>
+  </header>
+
+  <mat-card class="about-card" appearance="outlined">
+    <mat-card-content>
+      <section class="about-section" aria-labelledby="overview-heading">
+        <h2 id="overview-heading">{{ t().aboutOverview }}</h2>
+        <p>{{ t().aboutOverviewBody }}</p>
+      </section>
+
+      <section class="about-section" aria-labelledby="intended-use-heading">
+        <h2 id="intended-use-heading">{{ t().aboutIntendedUse }}</h2>
+        <p>{{ t().aboutIntendedUseBody }}</p>
+      </section>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="about-card" appearance="outlined">
+    <mat-card-content>
+      <section class="about-section" aria-labelledby="predictions-heading">
+        <h2 id="predictions-heading">{{ t().aboutPredictions }}</h2>
+        <mat-list class="prediction-list">
+          @for (prediction of predictions; track prediction.title) {
+            <mat-list-item>
+              <mat-icon matListItemIcon aria-hidden="true">{{ prediction.icon }}</mat-icon>
+              <span matListItemTitle>{{ t()[prediction.title] }}</span>
+            </mat-list-item>
+          }
+        </mat-list>
+        <p class="section-footer">{{ t().aboutPredictionsFooter }}</p>
+      </section>
+
+      <section class="about-section" aria-labelledby="methodology-heading">
+        <h2 id="methodology-heading">{{ t().aboutMethodology }}</h2>
+        <p>{{ t().aboutMethodologyBody }}</p>
+      </section>
+
+      <section class="about-section" aria-labelledby="source-heading">
+        <h2 id="source-heading">{{ t().aboutModelSource }}</h2>
+        <p>{{ t().aboutModelSourceBody }}</p>
+      </section>
+
+      <section class="about-section" aria-labelledby="limitations-heading">
+        <h2 id="limitations-heading">{{ t().aboutLimitations }}</h2>
+        <p>{{ t().aboutLimitationsBody }}</p>
+      </section>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="about-card" appearance="outlined">
+    <mat-card-content>
+      <section class="about-section" aria-labelledby="privacy-heading">
+        <h2 id="privacy-heading">{{ t().aboutPrivacy }}</h2>
+        <p>{{ t().aboutPrivacyBody }}</p>
+      </section>
+
+      <section class="about-section" aria-labelledby="disclaimer-heading">
+        <h2 id="disclaimer-heading">{{ t().aboutDisclaimer }}</h2>
+        <p>{{ t().aboutDisclaimerBody }}</p>
+      </section>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="about-card" appearance="outlined">
+    <mat-card-content>
+      <section class="about-section credits" aria-labelledby="credits-heading">
+        <h2 id="credits-heading">{{ t().aboutCredits }}</h2>
+        <mat-list class="credits-list">
+          <mat-list-item>
+            <span matListItemTitle>{{ t().aboutPublisher }}</span>
+            <span matListItemLine>{{ t().aboutPublisherName }}</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle>{{ t().aboutDeveloper }}</span>
+            <span matListItemLine>{{ t().aboutDeveloperName }}</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle>{{ t().aboutVersion }}</span>
+            <span matListItemLine>{{ version }}</span>
+          </mat-list-item>
+        </mat-list>
+      </section>
+    </mat-card-content>
+  </mat-card>
+</article>

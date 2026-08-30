@@ -67,13 +67,38 @@
 }
 
 .about {
+  display: block;
   padding: 0 16px;
+  color: var(--mat-sys-on-surface);
+  text-decoration: none;
 }
 
 .about-row {
   display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.about-copy {
+  flex: 1 1 auto;
+}
+
+.about-summary {
+  display: flex;
   align-items: baseline;
   gap: 12px;
+}
+
+.about-row > .material-icons {
+  color: var(--mat-sys-primary);
+  margin-top: 2px;
+}
+
+.about:focus-visible {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 2px;
 }
 
 .app-name {

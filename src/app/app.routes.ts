@@ -19,6 +19,10 @@ export const routes: Routes = [
     loadComponent: () => import('./references/references').then((m) => m.References),
   },
   {
+    path: 'settings/about',
+    loadComponent: () => import('./about/about').then((m) => m.About),
+  },
+  {
     path: 'settings',
     loadComponent: () => import('./settings/settings').then((m) => m.Settings),
   },
