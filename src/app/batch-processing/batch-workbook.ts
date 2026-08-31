@@ -109,7 +109,7 @@ async function loadExcelJS(): Promise<ExcelJSRuntime> {
     throw new Error('Excel processing is only available in a browser.');
   }
 
-  runtime.cliticalExcelJSLoading = new Promise<ExcelJSRuntime>((resolve, reject) => {
+  const loading = new Promise<ExcelJSRuntime>((resolve, reject) => {
     const script = document.createElement('script');
     script.src = new URL('vendor/exceljs/exceljs.min.js', document.baseURI).toString();
     script.async = true;
@@ -120,7 +120,13 @@ async function loadExcelJS(): Promise<ExcelJSRuntime> {
     script.onerror = () => reject(new Error('ExcelJS could not be loaded.'));
     document.head.append(script);
   });
-  return runtime.cliticalExcelJSLoading;
+  runtime.cliticalExcelJSLoading = loading;
+  return loading.catch((error: unknown) => {
+    if (runtime.cliticalExcelJSLoading === loading) {
+      delete runtime.cliticalExcelJSLoading;
+    }
+    throw error;
+  });
 }
 
 const NUMERIC_VALIDATION: Partial<

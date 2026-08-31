@@ -1,5 +1,5 @@
 import ExcelJS from 'exceljs';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import {
   createBatchResultWorkbook,
@@ -220,5 +220,66 @@ describe('batch workbook', () => {
     expect(sheet.getCell('B2').value).toBe('success');
     expect(sheet.getCell('B3').value).toBe('error');
     expect(String(sheet.getCell('C3').value)).toContain('alb');
+  });
+
+  it('allows ExcelJS script loading to be retried after a failure', async () => {
+    type RuntimeGlobals = typeof globalThis & {
+      ExcelJS?: typeof ExcelJS;
+      cliticalExcelJSLoading?: Promise<typeof ExcelJS>;
+    };
+    type Script = {
+      src: string;
+      async: boolean;
+      onload: (() => void) | null;
+      onerror: (() => void) | null;
+    };
+
+    const runtime = globalThis as RuntimeGlobals;
+    const originalExcelJS = runtime.ExcelJS;
+    const originalLoading = runtime.cliticalExcelJSLoading;
+    const scripts: Script[] = [];
+    const documentMock = {
+      baseURI: 'https://example.test/',
+      createElement: (tagName: string): Script => {
+        expect(tagName).toBe('script');
+        const script: Script = { src: '', async: false, onload: null, onerror: null };
+        scripts.push(script);
+        return script;
+      },
+      head: {
+        append: (script: Script) => {
+          if (scripts.length === 1) {
+            script.onerror?.();
+          } else {
+            runtime.ExcelJS = ExcelJS;
+            script.onload?.();
+          }
+        },
+      },
+    };
+
+    delete runtime.ExcelJS;
+    delete runtime.cliticalExcelJSLoading;
+    vi.stubGlobal('document', documentMock);
+
+    try {
+      await expect(createBatchTemplateWorkbook('en')).rejects.toThrow(
+        'ExcelJS could not be loaded.',
+      );
+      expect(runtime.cliticalExcelJSLoading).toBeUndefined();
+
+      const bytes = await createBatchTemplateWorkbook('en');
+
+      expect(scripts).toHaveLength(2);
+      expect(scripts[0].src).toContain('vendor/exceljs/exceljs.min.js');
+      expect(scripts[1].src).toContain('vendor/exceljs/exceljs.min.js');
+      expect(bytes.byteLength).toBeGreaterThan(0);
+    } finally {
+      if (originalExcelJS) runtime.ExcelJS = originalExcelJS;
+      else delete runtime.ExcelJS;
+      if (originalLoading) runtime.cliticalExcelJSLoading = originalLoading;
+      else delete runtime.cliticalExcelJSLoading;
+      vi.unstubAllGlobals();
+    }
   });
 });
