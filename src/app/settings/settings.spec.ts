@@ -106,6 +106,16 @@ describe('Settings', () => {
     }
   });
 
+  it('places the mobile app download links at the bottom of the settings page', async () => {
+    const fixture = TestBed.createComponent(Settings);
+    await fixture.whenStable();
+    const sections = [
+      ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('section'),
+    ];
+
+    expect(sections.at(-1)?.getAttribute('aria-labelledby')).toBe('mobile-app-heading');
+  });
+
   it('localizes the mobile app store badge labels in Japanese', async () => {
     TestBed.inject(TranslationService).setLocale('ja');
     const fixture = TestBed.createComponent(Settings);
