@@ -35,6 +35,30 @@
   padding: 8px 8px;
 }
 
+.mobile-app-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 16px;
+}
+
+.store-badge-link {
+  display: inline-flex;
+  border-radius: 7px;
+}
+
+.store-badge-link:focus-visible {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 3px;
+}
+
+.store-badge {
+  display: block;
+  width: auto;
+  height: 40px;
+}
+
 .legal-link {
   display: flex;
   align-items: center;

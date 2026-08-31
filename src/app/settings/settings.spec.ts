@@ -43,7 +43,9 @@ describe('Settings', () => {
     expect(text).toContain('日本語');
     expect(text).toContain('English');
 
-    const links = [...host.querySelectorAll<HTMLAnchorElement>('a.legal-link')];
+    const links = [
+      ...host.querySelectorAll<HTMLAnchorElement>('a.legal-link'),
+    ];
     expect(links.map((link) => link.querySelector('span')?.textContent)).toEqual([
       'Terms of Service',
       'Privacy Policy',
@@ -67,9 +69,7 @@ describe('Settings', () => {
     const fixture = TestBed.createComponent(Settings);
     await fixture.whenStable();
     const host = fixture.nativeElement as HTMLElement;
-    const links = [
-      ...host.querySelectorAll<HTMLAnchorElement>('a.legal-link'),
-    ];
+    const links = [...host.querySelectorAll<HTMLAnchorElement>('a.legal-link')];
 
     expect(links.map((link) => link.querySelector('span')?.textContent)).toEqual([
       '利用規約',
@@ -80,6 +80,45 @@ describe('Settings', () => {
       'https://studiome.github.io/clitical-legal/terms/ja/',
       'https://studiome.github.io/clitical-legal/privacy/ja/',
       'https://studiome.github.io/clitical-legal/support/ja/',
+    ]);
+  });
+
+  it('renders official mobile app store badges with the supplied links', async () => {
+    const fixture = TestBed.createComponent(Settings);
+    await fixture.whenStable();
+    const links = [
+      ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLAnchorElement>(
+        'a.store-badge-link',
+      ),
+    ];
+
+    expect(links.map((link) => link.href)).toEqual([
+      'https://apps.apple.com/app/id1660733252',
+      'https://play.google.com/store/apps/details?id=org.studiomexx.clitical_android',
+    ]);
+    expect(links.map((link) => link.querySelector('img')?.alt)).toEqual([
+      'Download CLiTICAL on the App Store',
+      'Get CLiTICAL on Google Play',
+    ]);
+    for (const link of links) {
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toContain('noopener');
+    }
+  });
+
+  it('localizes the mobile app store badge labels in Japanese', async () => {
+    TestBed.inject(TranslationService).setLocale('ja');
+    const fixture = TestBed.createComponent(Settings);
+    await fixture.whenStable();
+    const badges = [
+      ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLImageElement>(
+        'img.store-badge',
+      ),
+    ];
+
+    expect(badges.map((badge) => badge.alt)).toEqual([
+      'App StoreからCLiTICALをダウンロード',
+      'Google PlayでCLiTICALを手に入れよう',
     ]);
   });
 

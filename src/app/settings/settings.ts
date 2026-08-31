@@ -17,6 +17,24 @@ export class Settings {
   protected readonly t = this.translation.t;
   protected readonly locale = this.translation.locale;
   protected readonly version = APP_VERSION;
+  protected readonly mobileAppLinks = computed(() => {
+    const locale = this.locale();
+    const appStoreBadgeLocale = locale === 'ja' ? 'ja-jp' : 'en-us';
+    const googlePlayBadgeLocale = locale === 'ja' ? 'ja' : 'en_us';
+
+    return [
+      {
+        href: 'https://apps.apple.com/app/id1660733252',
+        imageSrc: `https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/${appStoreBadgeLocale}?size=250x83`,
+        alt: this.t().downloadOnTheAppStore,
+      },
+      {
+        href: 'https://play.google.com/store/apps/details?id=org.studiomexx.clitical_android',
+        imageSrc: `https://play.google.com/intl/${googlePlayBadgeLocale}/badges/static/images/badges/${locale}_badge_web_generic.png`,
+        alt: this.t().getItOnGooglePlay,
+      },
+    ];
+  });
   protected readonly legalLinks = computed(() => {
     const locale = this.locale();
     const baseUrl = 'https://studiome.github.io/clitical-legal';

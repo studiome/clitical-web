@@ -15,6 +15,17 @@
   </div>
 </section>
 
+<section aria-labelledby="mobile-app-heading">
+  <h2 id="mobile-app-heading" class="section-title">{{ t().mobileApp }}</h2>
+  <div class="section-card mobile-app-links">
+    @for (link of mobileAppLinks(); track link.href) {
+      <a class="store-badge-link" [href]="link.href" target="_blank" rel="noopener">
+        <img class="store-badge" [src]="link.imageSrc" [alt]="link.alt" />
+      </a>
+    }
+  </div>
+</section>
+
 <section aria-labelledby="about-heading">
   <h2 id="about-heading" class="section-title">{{ t().about }}</h2>
   <a class="about about-row" routerLink="/settings/about">
