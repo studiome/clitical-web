@@ -12,6 +12,50 @@ describe('batch workbook', () => {
   beforeAll(() => {
     Object.assign(globalThis, { ExcelJS });
   });
+  it.each(['error', 'load'] as const)('retries ExcelJS after a failed %s event', async (event) => {
+    const runtime = globalThis as typeof globalThis & {
+      ExcelJS?: typeof ExcelJS;
+      cliticalExcelJSLoading?: Promise<typeof ExcelJS>;
+    };
+    delete runtime.ExcelJS;
+    delete runtime.cliticalExcelJSLoading;
+    try {
+      const first = createBatchTemplateWorkbook('en');
+      const failed = expect(first).rejects.toThrow();
+      const script = document.querySelector<HTMLScriptElement>('script[src*="exceljs.min.js"]')!;
+      script.dispatchEvent(new Event(event));
+      await failed;
+      const retry = createBatchTemplateWorkbook('en');
+      // Attach the rejection handler before assertions so failures stay contained.
+      const outcome = retry.then(() => true, () => false);
+      const next = document.querySelector<HTMLScriptElement>('script[src*="exceljs.min.js"]')!;
+      expect(next).not.toBe(script);
+      runtime.ExcelJS = ExcelJS;
+      next.dispatchEvent(new Event('load'));
+      expect(await outcome).toBe(true);
+    } finally {
+      runtime.ExcelJS = ExcelJS;
+      delete runtime.cliticalExcelJSLoading;
+      document.querySelectorAll('script[src*="exceljs.min.js"]').forEach((script) => script.remove());
+    }
+  });
+
+  it('fills missing IDs using worksheet rows without colliding with later IDs', async () => {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(await createBatchTemplateWorkbook('en'));
+    const sheet = workbook.getWorksheet('Data Entry')!;
+    for (const row of [3, 4, 5, 6]) sheet.getCell(row, 2).value = 'Female';
+    sheet.getCell('A4').value = null;
+    sheet.getCell('A5').value = '   ';
+    sheet.getCell('A6').value = 'CASE-0003';
+    const rows = await readBatchWorkbook(await workbook.xlsx.writeBuffer());
+    const ids = calculateBatchRows(rows).map((result) => result.caseId);
+    expect(ids[0]).toBe('CASE-0002');
+    expect(ids[3]).toBe('CASE-0003');
+    expect(new Set(ids).size).toBe(4);
+    expect(rows.every((row) => String(row['caseId'] ?? '').trim())).toBe(true);
+  });
+
   it('creates a Japanese template using the web app question names and choices', async () => {
     const bytes = await createBatchTemplateWorkbook('ja');
     const workbook = new ExcelJS.Workbook();
@@ -232,6 +276,7 @@ describe('batch workbook', () => {
       async: boolean;
       onload: (() => void) | null;
       onerror: (() => void) | null;
+      remove: () => void;
     };
 
     const runtime = globalThis as RuntimeGlobals;
@@ -242,7 +287,7 @@ describe('batch workbook', () => {
       baseURI: 'https://example.test/',
       createElement: (tagName: string): Script => {
         expect(tagName).toBe('script');
-        const script: Script = { src: '', async: false, onload: null, onerror: null };
+        const script: Script = { src: '', async: false, onload: null, onerror: null, remove: vi.fn() };
         scripts.push(script);
         return script;
       },

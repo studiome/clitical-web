@@ -113,11 +113,15 @@ async function loadExcelJS(): Promise<ExcelJSRuntime> {
     const script = document.createElement('script');
     script.src = new URL('vendor/exceljs/exceljs.min.js', document.baseURI).toString();
     script.async = true;
+    const fail = (message: string) => {
+      script.remove();
+      reject(new Error(message));
+    };
     script.onload = () => {
       if (runtime.ExcelJS) resolve(runtime.ExcelJS);
-      else reject(new Error('ExcelJS did not initialize.'));
+      else fail('ExcelJS did not initialize.');
     };
-    script.onerror = () => reject(new Error('ExcelJS could not be loaded.'));
+    script.onerror = () => fail('ExcelJS could not be loaded.');
     document.head.append(script);
   });
   runtime.cliticalExcelJSLoading = loading;
@@ -416,6 +420,8 @@ export async function readBatchWorkbook(data: ExcelJS.Buffer): Promise<RawBatchR
   }
 
   const rows: RawBatchRow[] = [];
+  const sourceRows: number[] = [];
+  const usedIds = new Set<string>();
   for (let rowNumber = 2; rowNumber <= sheet.rowCount; rowNumber += 1) {
     const row: RawBatchRow = {};
     BATCH_FIELDS.forEach((field, index) => {
@@ -425,8 +431,22 @@ export async function readBatchWorkbook(data: ExcelJS.Buffer): Promise<RawBatchR
         cellValue(sheet.getCell(rowNumber, index + 1).value),
       );
     });
-    if (hasPatientData(row)) rows.push(row);
+    if (hasPatientData(row)) {
+      rows.push(row);
+      sourceRows.push(rowNumber);
+      const caseId = String(row['caseId'] ?? '').trim();
+      if (caseId) usedIds.add(caseId);
+    }
   }
+  // Reserve all supplied IDs before filling blanks, including IDs in later rows.
+  rows.forEach((row, index) => {
+    if (String(row['caseId'] ?? '').trim()) return;
+    let candidateIndex = sourceRows[index] - 2;
+    let caseId = formatCaseId(candidateIndex);
+    while (usedIds.has(caseId)) caseId = formatCaseId(++candidateIndex);
+    row['caseId'] = caseId;
+    usedIds.add(caseId);
+  });
   return rows;
 }
 
