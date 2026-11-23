@@ -161,7 +161,7 @@ describe('Settings', () => {
     const fixture = TestBed.createComponent(Settings);
     await fixture.whenStable();
     const text = (fixture.nativeElement as HTMLElement).textContent!;
-    expect(text).toContain('2.1.1');
+    expect(text).toContain('2.1.2');
     expect(text).toContain('JSVS');
   });
 
